@@ -23,8 +23,9 @@ let config =
         "versioning:branch",   match environVar "teamcity_build_branch" with
                                    | "<default>" -> environVar "vcsroot_branch"
                                    | _ -> environVar "teamcity_build_branch"
-    ]
+        "vs:version",          environVarOrDefault "vs_version"            "11.0" ]
 
+// Target definitions
 Target "Default"           <| DoNothing
 Target "Packaging:Package" <| Packaging.package config
 Target "Packaging:Restore" <| Packaging.restore config
@@ -36,6 +37,7 @@ Target "Versioning:Update" <| Versioning.update config
 Target "Test:Run"          <| Test.run config
 Target "SpecFlow:Run"      <| Specflow.run config
 
+// Build order
 "Solution:Clean"
     ==> "Packaging:Restore"
     ==> "Versioning:Update"

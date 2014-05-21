@@ -3,6 +3,7 @@
 
 open System
 open System.Text.RegularExpressions
+open System.Xml
 open Fake
 open Fake.Git
 open Utils
@@ -19,6 +20,26 @@ let private escapeBranchName rawName =
     safeChars.[0..(min 9 <| String.length safeChars - 1)]
 
     
+let private constructInfoVersion (config: Map<string, string>) (fileVersion: Version) file =
+    let infoVersion = 
+        Version (
+            fileVersion.Major, 
+            fileVersion.Minor, 
+            fileVersion.Build)
+
+    let suffix =
+        match isLocalBuild with
+            | true -> 
+                "-" + ((getBranchName (DirectoryName file)) |> escapeBranchName) + "-local"
+            | _ ->
+                match config.get "versioning:branch" with
+                    | "master" -> 
+                        "." + config.get "versioning:build"
+                    | _ -> 
+                        "-" + (config.get "versioning:branch" |> escapeBranchName) + "-" + config.get "versioning:build" + "-ci"
+
+    infoVersion.ToString() + suffix
+
 
 let private constructVersions (config: Map<string, string>) file =
     let fileVersion = readAssemblyVersion file
@@ -30,24 +51,7 @@ let private constructVersions (config: Map<string, string>) file =
             fileVersion.Build, 
             int <| config.get "versioning:build")
 
-    let infoVersion = 
-        Version (
-            fileVersion.Major, 
-            fileVersion.Minor, 
-            fileVersion.Build)
-
-    let suffix =
-        match isLocalBuild with
-            | true -> 
-                "-" + (getBranchName (DirectoryName file) |> escapeBranchName) + "-local"
-            | _ ->
-                match config.get "versioning:branch" with
-                    | "master" -> 
-                        "." + config.get "versioning:build"
-                    | _ -> 
-                        "-" + (config.get "versioning:branch" |> escapeBranchName) + "-" + config.get "versioning:build" + "-ci"
-
-    assemblyVersion.ToString(), infoVersion.ToString() + suffix
+    assemblyVersion.ToString(), (constructInfoVersion config fileVersion file)
 
 let private updateAssemblyInfo config file =
     let versions = constructVersions config file
@@ -62,6 +66,20 @@ let private updateAssemblyInfo config file =
                  AssemblyInformationalVersion = snd versions
         })
 
+let private updateDeployNuspec config (file:string) =
+    let xdoc = new XmlDocument()
+    ReadFileAsString file |> xdoc.LoadXml
+    
+    let versionNode = xdoc.SelectSingleNode "/package/metadata/version"
+
+    let semVer = SemVerHelper.parse(versionNode.InnerText.ToString())
+
+    let fileVersion = new Version(semVer.Major, semVer.Minor, semVer.Patch, 0)
+
+    versionNode.InnerText <- (constructInfoVersion config fileVersion file)
+    
+    WriteStringToFile false file (xdoc.OuterXml.ToString().Replace("><",">\n<"))
+
 let update config _ =
     !+ "./**/AssemblyInfo.cs"
     ++ "./**/AssemblyInfo.vb"
@@ -69,3 +87,7 @@ let update config _ =
     ++ "./**/AssemblyInfo.vb"
         |> Scan
         |> Seq.iter (updateAssemblyInfo config)
+
+let updateDeploy config _ =
+    !! "./**/Deploy/*.nuspec"
+        |> Seq.iter (updateDeployNuspec config)
