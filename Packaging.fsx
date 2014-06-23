@@ -5,8 +5,9 @@
 
 open System
 open System.IO
-open System.Xml.Linq
 open System.IO.Compression
+open System.Text.RegularExpressions
+open System.Xml.Linq
 open Fake
 open Utils
 
@@ -22,10 +23,16 @@ let private filterPackageable proj =
 
 let private packageProject (config: Map<string, string>) outputDir proj =
 
+    let outputDirFull = match config.TryFind "packaging:outputsubdirs" with
+                        | Some "true" -> outputDir + "\\" + Path.GetFileNameWithoutExtension(proj)
+                        | _ -> outputDir
+
+    Directory.CreateDirectory(outputDirFull) |> ignore
+
     let args =
         sprintf "pack \"%s\" -OutputDirectory \"%s\" -IncludeReferencedProjects -Properties Configuration=%s;VisualStudioVersion=%s" 
             proj
-            outputDir
+            outputDirFull
             (config.get "build:configuration")
             (config.get "vs:version")
 
@@ -39,10 +46,16 @@ let private packageProject (config: Map<string, string>) outputDir proj =
 
 let private packageDeployment (config: Map<string, string>) outputDir proj =
 
+    let outputDirFull = match config.TryFind "packaging:outputsubdirs" with
+                        | Some "true" -> outputDir + "\\" + Path.GetFileNameWithoutExtension(proj)
+                        | _ -> outputDir
+
+    Directory.CreateDirectory(outputDirFull) |> ignore
+
     let args =
-        sprintf "pack \"%s\" -OutputDirectory \"%s\" -Properties Configuration=%s;VisualStudioVersion=%s" 
+        sprintf "pack \"%s\" -OutputDirectory \"%s\" -Properties Configuration=%s;VisualStudioVersion=%s -NoPackageAnalysis" 
             proj
-            outputDir
+            outputDirFull
             (config.get "build:configuration")
             (config.get "vs:version")
 
@@ -87,10 +100,21 @@ let private updatePackages (config: Map<string, string>) file =
 
             if result <> 0 then failwithf "Error updating NuGet package %s" specificId
 
-let private pushPackages (config: Map<string, string>) pushurl apikey nupkg =
+let private getPackageName nupkg =
+    // Regex turns D:\output\My.Package.1.0.0.0.nupkg into My.Package
+    let regex = new Regex(".*\\\\([^\\\\]+)\\.[\\d]+\\.[\\d]+\\.[\\d]+[\\.\\-][\\d\\-a-zA-Z]+\\.nupkg")
+    regex.Replace(nupkg, "$1")
 
-    if isNullOrEmpty pushurl || isNullOrEmpty apikey then failwith "You must specify both apikey and pushurl to push NuGet packages."
+let private pushPackagesToDir (config: Map<string, string>) dir nupkg =
+    let info = new FileInfo(nupkg)
+    let name = getPackageName nupkg
+    let directory = sprintf "%s\%s" dir name
+    if (not (Directory.Exists(directory))) then 
+        Directory.CreateDirectory(directory) |> ignore
+    let file = info.CopyTo(sprintf "%s\%s" directory info.Name, true)
+    sprintf "Pushed File: %s to: %s" info.Name directory |> ignore
 
+let private pushPackagesToUrl (config: Map<string, string>) pushurl apikey nupkg =
     let args =
         sprintf "push \"%s\" %s -s \"%s\""
             nupkg
@@ -104,6 +128,17 @@ let private pushPackages (config: Map<string, string>) pushurl apikey nupkg =
 
     if result <> 0 then failwithf "Error pushing NuGet package %s" nupkg
 
+let pushPackages (config: Map<string, string>) pushto pushdir pushurl apikey nupkg =
+    match pushto, pushdir with
+    | Some "dir", Some dir ->
+        if isNullOrEmpty dir then failwith "You must specify pushdir to push NuGet packages with the pushto=dir option."
+        pushPackagesToDir config dir nupkg
+    | Some "dir", None ->
+        failwith "You must specify pushdir to push NuGet packages with the pushto=dir option."
+    | Some "url", _ | None, _ | _, _ ->
+        if isNullOrEmpty pushurl || isNullOrEmpty apikey then failwith "You must specify both apikey and pushurl to push NuGet packages with the pushto=url option."
+        pushPackagesToUrl config pushurl apikey nupkg
+
 let restore config _ =
     !! "./**/packages.config"
         |> Seq.iter (restorePackages config)
@@ -112,30 +147,40 @@ let update config _ =
     !! "./**/packages.config"
         |> Seq.iter (updatePackages config)
 
+let cleanDirOnceHistory = new System.Collections.Generic.List<string>()
+let CleanDirOnce dir =
+    if (cleanDirOnceHistory.Contains(dir)) = false then
+        cleanDirOnceHistory.Add(dir)
+        CleanDir dir
+
 let package (config : Map<string, string>) _ =
-    CleanDir (config.get "packaging:output")
+    CleanDirOnce (config.get "packaging:output")
 
     !! "./**/*.*proj"
         |> Seq.choose filterPackageable
         |> Seq.iter (packageProject config (config.get "packaging:output"))
 
 let packageDeploy (config : Map<string, string>) _ =
-    CleanDir (config.get "packaging:deployoutput")
+    CleanDirOnce (config.get "packaging:deployoutput")
 
     !! "./**/Deploy/*.nuspec"
         |> Seq.iter (packageDeployment config (config.get "packaging:deployoutput"))
 
 let push (config : Map<string, string>) _ =
+    let pushto = config.TryFind "packaging:pushto"
+    let pushdir = config.TryFind "packaging:pushdir"
     let pushurl = config.get "packaging:pushurl"
     let apikey = config.get "packaging:apikey"
     !! (config.get "packaging:output" @@ "./**/*.nupkg")
-        |> Seq.iter (pushPackages config pushurl apikey)
+        |> Seq.iter (pushPackages config pushto pushdir pushurl apikey)
 
 let pushDeploy (config : Map<string, string>) _ =
+    let pushto = config.TryFind "packaging:deploypushto"
+    let pushdir = config.TryFind "packaging:deploypushdir"
     let pushurl = config.get "packaging:deploypushurl"
     let apikey = config.get "packaging:deployapikey"
     !! (config.get "packaging:deployoutput" @@ "./**/*.nupkg")
-        |> Seq.iter (pushPackages config pushurl apikey)
+        |> Seq.iter (pushPackages config pushto pushdir pushurl apikey)
 
 let private makeConstraint vs =
     match Version.TryParse vs with
