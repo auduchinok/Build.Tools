@@ -16,7 +16,7 @@ let private runCompiler target (config: Map<string, string>) =
                     "DebugSymbols", "True"
                     "Configuration", config.get "build:configuration"
                 ]
-            MaxCpuCount = Some <| Some Environment.ProcessorCount }
+            MaxCpuCount = Some <| Some (1) }
     build setParams (config.get "build:solution")
 
 
