@@ -46,8 +46,8 @@ Target "Test:Run"          <| Test.run config
 Target "SpecFlow:Run"      <| Specflow.run config
 
 // Build order
-"Solution:Clean"
-    ==> "Packaging:Restore"
+"Packaging:Restore"
+    ==> "Solution:Clean"
     ==> "Versioning:Update"
     ==> "Solution:Build"
     ==> "Packaging:Package"
