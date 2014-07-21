@@ -22,7 +22,6 @@ let private filterPackageable proj =
                 | _ -> None)
 
 let private packageProject (config: Map<string, string>) outputDir proj =
-
     let outputDirFull = match config.TryFind "packaging:outputsubdirs" with
                         | Some "true" -> outputDir + "\\" + Path.GetFileNameWithoutExtension(proj)
                         | _ -> outputDir
@@ -45,7 +44,6 @@ let private packageProject (config: Map<string, string>) outputDir proj =
     if result <> 0 then failwithf "Error packaging NuGet package. Project file: %s" proj
 
 let private packageDeployment (config: Map<string, string>) outputDir proj =
-
     let outputDirFull = match config.TryFind "packaging:outputsubdirs" with
                         | Some "true" -> outputDir + "\\" + Path.GetFileNameWithoutExtension(proj)
                         | _ -> outputDir
@@ -158,13 +156,12 @@ let package (config : Map<string, string>) _ =
 
     !! (sprintf @"%s" (config.get "packaging:nuspecpath"))
         |> Seq.choose filterPackageable
-        //|> Seq.iter (fun el -> printf "\n\nEl = %s\n" el)
         |> Seq.iter (packageProject config (config.get "packaging:output"))
 
 let packageDeploy (config : Map<string, string>) _ =
     CleanDirOnce (config.get "packaging:deployoutput")
 
-    !! "./**/Deploy/*.nuspec"
+    !! (sprintf @"%s" (config.get "packaging:nuspecpath"))
         |> Seq.iter (packageDeployment config (config.get "packaging:deployoutput"))
 
 let push (config : Map<string, string>) _ =
