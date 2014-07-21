@@ -29,7 +29,8 @@ let config =
         "packaging:deploypushurl",      environVarOrDefault "deploypushurl"         ""
         "packaging:deployapikey",       environVarOrDefault "deployapikey"          ""
         "packaging:packages",           environVarOrDefault "packages"              ""
-        "test:path",                    environVarOrDefault "tests"                 ".\..\src\*\bin\Release\**\*.Tests.dll"
+        "packaging:nuspecpath",         environVarOrDefault "nuspec"                ""
+        "test:path",                    environVarOrDefault "tests"                 ""
         "versioning:build",             environVarOrDefault "build_number"          "0"
         "versioning:branch",            match environVar "teamcity_build_branch" with
                                             | "<default>" -> environVar "vcsroot_branch"
