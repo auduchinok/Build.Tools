@@ -9,6 +9,14 @@ open Fake.Git
 open Utils
 
 let private readAssemblyVersion file =
+//    printf "\n\n\nLINE = \n"
+//    ReadFile file
+//        |> Seq.find (fun line -> not (line.StartsWith("//") || line.StartsWith("'")) && line.Contains "AssemblyVersion")
+//        |> (fun line -> Regex.Match(line, @"(?<=\().+?(?=\))").Value)
+//        |> (fun v -> v.Trim[|'"'|])
+//        |> printf "%s"
+//    printf "\n\n\n"
+
     ReadFile file
         |> Seq.find (fun line -> not (line.StartsWith("//") || line.StartsWith("'")) && line.Contains "AssemblyVersion")
         |> (fun line -> Regex.Match(line, @"(?<=\().+?(?=\))").Value)
@@ -30,13 +38,13 @@ let private constructInfoVersion (config: Map<string, string>) (fileVersion: Ver
     let suffix =
         match isLocalBuild with
             | true -> 
-                "-" + ((getBranchName (DirectoryName file)) |> escapeBranchName) + "-local"
+                "-" + ((getBranchName (DirectoryName file)) |> escapeBranchName) + "-" + (fileVersion.Revision + 1).ToString() + "-local"
             | _ ->
                 match config.get "versioning:branch" with
                     | "master" -> 
                         "." + config.get "versioning:build"
                     | _ -> 
-                        "-" + (config.get "versioning:branch" |> escapeBranchName) + "-" + config.get "versioning:build" + "-ci"
+                        "-" + (config.get "versioning:branch" |> escapeBranchName) + "-" + (fileVersion.Revision + 1).ToString() + "-ci"
 
     infoVersion.ToString() + suffix
 
@@ -49,7 +57,10 @@ let private constructVersions (config: Map<string, string>) file =
             fileVersion.Major, 
             fileVersion.Minor,
             fileVersion.Build, 
-            int <| config.get "versioning:build")
+            int <| fileVersion.Revision + 1)
+
+    //printf "\n\nVersionAss  =  %s\n\n" (assemblyVersion.ToString())
+    //printf "\n\nVersionConstruct  =  %s\n\n" (constructInfoVersion config fileVersion file)
 
     assemblyVersion.ToString(), (constructInfoVersion config fileVersion file)
 
@@ -74,20 +85,25 @@ let private updateDeployNuspec config (file:string) =
 
     let semVer = SemVerHelper.parse(versionNode.InnerText.ToString())
 
-    let fileVersion = new Version(semVer.Major, semVer.Minor, semVer.Patch, 0)
+    let semVerSplitByDot = versionNode.InnerText.Split('.')
+    let suffix = semVerSplitByDot.[semVerSplitByDot.Length - 1]
+    let suffixSplitByHyphen = suffix.Split('-')
+    let buildNumber = suffixSplitByHyphen.[2] |> int
+
+    let fileVersion = new Version(semVer.Major, semVer.Minor, semVer.Patch, buildNumber)
 
     versionNode.InnerText <- (constructInfoVersion config fileVersion file)
     
     WriteStringToFile false file (xdoc.OuterXml.ToString().Replace("><",">\n<"))
 
-let update config _ =
-    !+ "./**/AssemblyInfo.cs"
-    ++ "./**/AssemblyInfo.vb"
-    ++ "./**/AssemblyInfo.fs"
-    ++ "./**/AssemblyInfo.vb"
+let update (config : Map<string, string>) _ =
+    //!+ "./**/AssemblyInfo.cs"
+    //++ "./**/AssemblyInfo.vb"
+    !! (sprintf @"%s" (config.get "packaging:assemblyinfopath"))
+    //++ "./**/AssemblyInfo.vb"
         |> Scan
         |> Seq.iter (updateAssemblyInfo config)
 
-let updateDeploy config _ =
-    !! "./**/Deploy/*.nuspec"
+let updateDeploy (config : Map<string, string>) _ =
+    !! (sprintf @"%s" (config.get "packaging:nuspecpath"))
         |> Seq.iter (updateDeployNuspec config)
