@@ -156,8 +156,9 @@ let CleanDirOnce dir =
 let package (config : Map<string, string>) _ =
     CleanDirOnce (config.get "packaging:output")
 
-    !! "./**/*.*proj"
+    !! (sprintf @"%s" (config.get "packaging:nuspecpath"))
         |> Seq.choose filterPackageable
+        //|> Seq.iter (fun el -> printf "\n\nEl = %s\n" el)
         |> Seq.iter (packageProject config (config.get "packaging:output"))
 
 let packageDeploy (config : Map<string, string>) _ =
