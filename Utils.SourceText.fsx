@@ -49,11 +49,11 @@ Target "Def"            <| DoNothing
 
 "Clean"
     ==> "Build"
-    //==> "TestRun"
-    //==> "Version"
-    //==> "Package"
-    //==> "PushPackage"
-    //==> "Commit"
+    ==> "TestRun"
+    ==> "Version"
+    ==> "Package"
+    ==> "PushPackage"
+    ==> "Commit"
     ==> "PushChanges"
     ==> "Def"
 
