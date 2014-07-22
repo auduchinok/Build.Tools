@@ -17,7 +17,10 @@ let pushURL = @"https://www.myget.org/F/yc/api/v2/package"
 let pushApiKey = @"f6ba9139-9d42-4cf1-acaf-344f963ff807"
 
 let commitMessage = @"Change version of package in AssemblyInfo and Nuspec files (beta)"
-let gitCommandParameters = sprintf "commit -m \"%s\" \"%s\" \"%s\"" commitMessage pathToAssembleyInfo pathToNuspec
+let gitCommandToCommit = sprintf "commit -m \"%s\" \"%s\" \"%s\"" commitMessage pathToAssembleyInfo pathToNuspec
+let gitUsername = "YcGeneralUser"
+let gitPassword = "yc2@google"
+let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@github.com/YaccConstructor/YC.Utils.SourceText.git" gitUsername gitPassword
 
 config.["build:solution"] <- pathToSolution
 config.["core:tools"] <- pathToTools
@@ -32,10 +35,10 @@ Target "Version" (fun x ->
     Versioning.updateDeploy (mapOfDict config) x
 )
 Target "Commit" (fun _ ->
-    gitCommand pathToBuildScripts gitCommandParameters
+    gitCommand pathToBuildScripts gitCommandToCommit
 )
 Target "PushChanges" (fun _ ->
-    push pathToRepesitory
+    gitCommand pathToRepesitory gitCommandToPush
 )
 Target "Clean"          <| Solution.clean (mapOfDict config)
 Target "Build"          <| Solution.build (mapOfDict config)
