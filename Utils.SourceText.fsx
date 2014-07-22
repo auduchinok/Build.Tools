@@ -19,7 +19,7 @@ let pushApiKey = @"f6ba9139-9d42-4cf1-acaf-344f963ff807"
 let commitMessage = @"Change version of package in AssemblyInfo and Nuspec files (beta)"
 let gitCommandToCommit = sprintf "commit -m \"%s\" \"%s\" \"%s\"" commitMessage pathToAssembleyInfo pathToNuspec
 let gitUsername = "YcGeneralUser"
-let gitPassword = "yc2@google"
+let gitPassword = "yc2GeneralUser2014"
 let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@github.com/YaccConstructor/YC.Utils.SourceText.git" gitUsername gitPassword
 
 config.["build:solution"] <- pathToSolution
