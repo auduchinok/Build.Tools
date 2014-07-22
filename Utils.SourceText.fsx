@@ -53,7 +53,7 @@ Target "Def"            <| DoNothing
     //==> "Version"
     //==> "Package"
     //==> "PushPackage"
-    ==> "Commit"
+    //==> "Commit"
     ==> "PushChanges"
     ==> "Def"
 
