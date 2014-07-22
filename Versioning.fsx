@@ -9,14 +9,6 @@ open Fake.Git
 open Utils
 
 let private readAssemblyVersion file =
-//    printf "\n\n\nLINE = \n"
-//    ReadFile file
-//        |> Seq.find (fun line -> not (line.StartsWith("//") || line.StartsWith("'")) && line.Contains "AssemblyVersion")
-//        |> (fun line -> Regex.Match(line, @"(?<=\().+?(?=\))").Value)
-//        |> (fun v -> v.Trim[|'"'|])
-//        |> printf "%s"
-//    printf "\n\n\n"
-
     ReadFile file
         |> Seq.find (fun line -> not (line.StartsWith("//") || line.StartsWith("'")) && line.Contains "AssemblyVersion")
         |> (fun line -> Regex.Match(line, @"(?<=\().+?(?=\))").Value)
@@ -59,9 +51,6 @@ let private constructVersions (config: Map<string, string>) file =
             fileVersion.Build, 
             int <| fileVersion.Revision + 1)
 
-    //printf "\n\nVersionAss  =  %s\n\n" (assemblyVersion.ToString())
-    //printf "\n\nVersionConstruct  =  %s\n\n" (constructInfoVersion config fileVersion file)
-
     assemblyVersion.ToString(), (constructInfoVersion config fileVersion file)
 
 let private updateAssemblyInfo config file =
@@ -88,7 +77,11 @@ let private updateDeployNuspec config (file:string) =
     let semVerSplitByDot = versionNode.InnerText.Split('.')
     let suffix = semVerSplitByDot.[semVerSplitByDot.Length - 1]
     let suffixSplitByHyphen = suffix.Split('-')
-    let buildNumber = suffixSplitByHyphen.[2] |> int
+    let mutable buildNumber = 0
+    if suffixSplitByHyphen.Length > 1 then 
+        buildNumber <- (suffixSplitByHyphen.[2] |> int)
+    else 
+        buildNumber <- (suffixSplitByHyphen.[0] |> int)
 
     let fileVersion = new Version(semVer.Major, semVer.Minor, semVer.Patch, buildNumber)
 
