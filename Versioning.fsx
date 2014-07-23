@@ -28,10 +28,10 @@ let private constructInfoVersion (config: Map<string, string>) (fileVersion: Ver
             fileVersion.Build)
 
     let suffix =
-//        match isLocalBuild with
-//            | true -> 
-//                "-" + ((getBranchName (DirectoryName file)) |> escapeBranchName) + "-" + (fileVersion.Revision + 1).ToString() + "-local"
-//            | _ ->
+        match isLocalBuild with
+            | true -> 
+                "-" + ((getBranchName (DirectoryName file)) |> escapeBranchName) + "-" + (fileVersion.Revision + 1).ToString() + "-local"
+            | _ ->
                 match config.get "versioning:branch" with
                     | "master" -> 
                         "." + (fileVersion.Revision + 1).ToString()
