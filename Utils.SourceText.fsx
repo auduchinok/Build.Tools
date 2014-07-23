@@ -36,6 +36,9 @@ Target "Version" (fun x ->
     Versioning.updateDeploy (mapOfDict config) x
 )
 Target "Commit" (fun _ ->
+    printf "\n\nCurrentDIR  =  %s" (Path.GetFullPath("."))
+    printf "\n\nWorkingDIR  =  %s\n\n" (Path.GetFullPath(pathToRepesitory))
+
     gitCommand pathToRepesitory gitCommandToCommit
 )
 Target "PushChanges" (fun _ ->
