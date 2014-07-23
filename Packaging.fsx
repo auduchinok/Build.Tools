@@ -1,11 +1,11 @@
 #r @"./fake/fakelib.dll"
 #r "System.Xml.Linq.dll"
-#r "System.IO.Compression.dll"
+//#r "System.IO.Compression.dll"
 #load "./Utils.fsx"
 
 open System
 open System.IO
-open System.IO.Compression
+//open System.IO.Compression
 open System.Text.RegularExpressions
 open System.Xml.Linq
 open Fake
@@ -201,19 +201,19 @@ let private applyConstraint (xml:string) =
         |> Seq.iter (fun (e, v) -> e.SetAttributeValue(xn "version", v))
     doc.ToString()
 
-let private transform nuSpec f =
-    use xp = new ZipArchive(new FileStream(nuSpec, FileMode.Open), ZipArchiveMode.Update)
-    let entry =
-        xp.Entries
-        |> Seq.find (fun x -> x.Name.EndsWith (".nuspec"))
-    let (text:string) =
-        use sr = new StreamReader(entry.Open())
-        sr.ReadToEnd() |> f
-    use w = new StreamWriter(entry.Open())
-    w.Write text
-    w.BaseStream.SetLength(w.BaseStream.Position)
+//let private transform nuSpec f =
+//    use xp = new ZipArchive(new FileStream(nuSpec, FileMode.Open), ZipArchiveMode.Update)
+//    let entry =
+//        xp.Entries
+//        |> Seq.find (fun x -> x.Name.EndsWith (".nuspec"))
+//    let (text:string) =
+//        use sr = new StreamReader(entry.Open())
+//        sr.ReadToEnd() |> f
+//    use w = new StreamWriter(entry.Open())
+//    w.Write text
+//    w.BaseStream.SetLength(w.BaseStream.Position)
         
 //constrains a nuget package to sensible dependency ranges
-let constrain (config : Map<string, string>) () =
-    !! (config.get "packaging:output" @@ "./**/*.nupkg")
-    |> Seq.iter (fun f -> transform f applyConstraint)
+//let constrain (config : Map<string, string>) () =
+//    !! (config.get "packaging:output" @@ "./**/*.nupkg")
+//    |> Seq.iter (fun f -> transform f applyConstraint)
