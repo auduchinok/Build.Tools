@@ -6,7 +6,7 @@ open Fake.Git
 open Core
 open System.IO
 
-let pathToRepository = @".."
+let pathToRepository = Path.GetFullPath(".\..")
 let pathToSolution = @"..\src\YC.Utils.SourceText.sln"
 let pathToTests = @"..\Bin\Release\v40\Utils.SourceText.Tests.dll"
 let pathToTools = @"..\tools\Build.Tools"
