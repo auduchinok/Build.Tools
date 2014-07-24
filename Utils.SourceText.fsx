@@ -57,8 +57,8 @@ Target "Def"            <| DoNothing
     ==> "Version"
     //==> "Package"
     //==> "PushPackage"
-    //==> "Commit"
-    //==> "PushChanges"
+    ==> "Commit"
+    ==> "PushChanges"
     ==> "Def"
 
 RunParameterTargetOrDefault "target" "Def"
