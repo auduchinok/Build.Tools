@@ -6,7 +6,7 @@ open Fake.Git
 open Core
 open System.IO
 
-let pathToRepesitory = @".."
+let pathToRepository = @".."
 let pathToSolution = @"..\src\YC.Utils.SourceText.sln"
 let pathToTests = @"..\Bin\Release\v40\Utils.SourceText.Tests.dll"
 let pathToTools = @"..\tools\Build.Tools"
@@ -37,12 +37,12 @@ Target "Version" (fun x ->
 )
 Target "Commit" (fun _ ->
     printf "\n\nCurrentDIR  =  %s" (Path.GetFullPath("."))
-    printf "\n\nWorkingDIR  =  %s\n\n" (Path.GetFullPath(pathToRepesitory))
+    printf "\n\nWorkingDIR  =  %s\n\n" (Path.GetFullPath(pathToRepository))
 
-    gitCommand pathToRepesitory gitCommandToCommit
+    gitCommand pathToRepository gitCommandToCommit
 )
 Target "PushChanges" (fun _ ->
-    gitCommand pathToRepesitory gitCommandToPush
+    gitCommand pathToRepository gitCommandToPush
 )
 Target "Clean"          <| Solution.clean (mapOfDict config)
 Target "Build"          <| Solution.build (mapOfDict config)
