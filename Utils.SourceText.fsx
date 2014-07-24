@@ -19,9 +19,12 @@ let pushApiKey = @"f6ba9139-9d42-4cf1-acaf-344f963ff807"
 
 let commitMessage = @"Change version of package in AssemblyInfo and Nuspec files (beta)"
 let gitCommandToCommit = sprintf "commit -m \"%s\" \"%s\" \"%s\"" commitMessage pathToAssembleyInfoFromRoot pathToNuspecFromRoot
-let gitUsername = "YcGeneralUser"
+let gitUserName = "YcGeneralUser"
 let gitPassword = "yc2GeneralUser2014"
-let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@github.com/YaccConstructor/YC.Utils.SourceText.git" gitUsername gitPassword
+let gitEmail = "yc.teamcity@gmail.com"
+let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@github.com/YaccConstructor/YC.Utils.SourceText.git" gitUserName gitPassword
+let gitConfigUser = sprintf "config --global user.email \"%s\"" gitEmail
+let gitConfigEmail = sprintf "config --global user.name \"%s\"" gitUserName
 
 config.["build:solution"] <- pathToSolution
 config.["core:tools"] <- pathToTools
@@ -36,8 +39,8 @@ Target "Version" (fun x ->
     Versioning.updateDeploy (mapOfDict config) x
 )
 Target "Commit" (fun _ ->
-    printf "\n\nCurrentDIR  =  %s" (Path.GetFullPath("."))
-    printf "\n\nWorkingDIR  =  %s\n\n" (Path.GetFullPath(pathToRepository))
+    gitCommand pathToRepository gitConfigUser
+    gitCommand pathToRepository gitConfigEmail
 
     gitCommand pathToRepository gitCommandToCommit
 )
