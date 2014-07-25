@@ -16,6 +16,7 @@ let config =
         "build:configuration",          environVarOrDefault "configuration"         "Release"
         "build:solution",               environVar          "solution"
         "core:tools",                   environVar          "tools"
+        "bin:path",                     environVarOrDefault "bin"                   ""
         "packaging:output",             environVarOrDefault "output"                (sprintf "%s\output" (Path.GetFullPath(".")))
         "packaging:deployoutput",       environVarOrDefault "deployoutput"          (sprintf "%s\packages" (Path.GetFullPath(".")))
         "packaging:outputsubdirs",      environVarOrDefault "outputsubdirs"         "false"
@@ -29,7 +30,7 @@ let config =
         "packaging:deploypushurl",      environVarOrDefault "deploypushurl"         ""
         "packaging:deployapikey",       environVarOrDefault "deployapikey"          ""
         "packaging:packages",           environVarOrDefault "packages"              ""
-        "packaging:assemblyinfopath",   environVarOrDefault "assemblyinfo"         ""
+        "packaging:assemblyinfopath",   environVarOrDefault "assemblyinfo"          ""
         "packaging:nuspecpath",         environVarOrDefault "nuspec"                ""
         "test:path",                    environVarOrDefault "tests"                 ""
         "versioning:build",             environVarOrDefault "build_number"          "0"

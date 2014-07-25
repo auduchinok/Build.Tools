@@ -6,7 +6,8 @@ open Fake.Git
 open Core
 open System.IO
 
-let pathToRepository = Path.GetFullPath(".\..")
+let pathToRepository = @".."
+let pathToDll = @"..\Bin\Release\v40"
 let pathToSolution = @"..\src\YC.Utils.SourceText.sln"
 let pathToTests = @"..\Bin\Release\v40\Utils.SourceText.Tests.dll"
 let pathToTools = @"..\tools\Build.Tools"
@@ -28,6 +29,7 @@ let gitConfigEmail = sprintf "config --global user.name \"%s\"" gitUserName
 
 config.["build:solution"] <- pathToSolution
 config.["core:tools"] <- pathToTools
+config.["bin:path"] <-pathToDll
 config.["test:path"] <- pathToTests
 config.["packaging:nuspecpath"] <- pathToNuspec
 config.["packaging:assemblyinfopath"] <- pathToAssembleyInfo
@@ -39,8 +41,8 @@ Target "Version" (fun x ->
     Versioning.updateDeploy (mapOfDict config) x
 )
 Target "Commit" (fun _ ->
-    gitCommand pathToRepository gitConfigUser
-    gitCommand pathToRepository gitConfigEmail
+    //gitCommand pathToRepository gitConfigUser
+    //gitCommand pathToRepository gitConfigEmail
 
     gitCommand pathToRepository gitCommandToCommit
 )
@@ -58,10 +60,10 @@ Target "Def"            <| DoNothing
     ==> "Build"
     //==> "TestRun"
     ==> "Version"
-    //==> "Package"
+    ==> "Package"
     //==> "PushPackage"
-    ==> "Commit"
-    ==> "PushChanges"
+    //==> "Commit"
+    //==> "PushChanges"
     ==> "Def"
 
 RunParameterTargetOrDefault "target" "Def"
