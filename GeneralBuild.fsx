@@ -1,4 +1,4 @@
-﻿#r "Fake/FakeLib.dll"
+﻿#r @"Fake/FakeLib.dll"
 #load "Packaging.fsx"
 
 open Fake 

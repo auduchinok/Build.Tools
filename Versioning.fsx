@@ -1,9 +1,10 @@
-#r "./fake/fakelib.dll"
+#r @"./fake/fakelib.dll"
 #load "./Utils.fsx"
 
 open System
 open System.Text.RegularExpressions
 open System.Xml
+open System.IO
 open Fake
 open Fake.Git
 open Utils
@@ -30,13 +31,13 @@ let private constructInfoVersion (config: Map<string, string>) (fileVersion: Ver
     let suffix =
         match isLocalBuild with
             | true -> 
-                "-" + ((getBranchName (DirectoryName file)) |> escapeBranchName) + "-local"
+                "-" + ((getBranchName (DirectoryName file)) |> escapeBranchName) + "-" + (fileVersion.Revision + 1).ToString() + "-local"
             | _ ->
                 match config.get "versioning:branch" with
                     | "master" -> 
-                        "." + config.get "versioning:build"
+                        "." + (fileVersion.Revision + 1).ToString()
                     | _ -> 
-                        "-" + (config.get "versioning:branch" |> escapeBranchName) + "-" + config.get "versioning:build" + "-ci"
+                        "-" + (config.get "versioning:branch" |> escapeBranchName) + "-" + (fileVersion.Revision + 1).ToString() + "-ci"
 
     infoVersion.ToString() + suffix
 
@@ -49,7 +50,7 @@ let private constructVersions (config: Map<string, string>) file =
             fileVersion.Major, 
             fileVersion.Minor,
             fileVersion.Build, 
-            int <| config.get "versioning:build")
+            int <| fileVersion.Revision + 1)
 
     assemblyVersion.ToString(), (constructInfoVersion config fileVersion file)
 
@@ -66,6 +67,27 @@ let private updateAssemblyInfo config file =
                  AssemblyInformationalVersion = snd versions
         })
 
+let private renameDll (config : Map<string,string>) file finalVersion=
+    let pathToDll = config.get "bin:path"
+    let allFiles = Directory.GetFiles(pathToDll)
+
+    for fileName in allFiles do
+        let fileNameWithoutExtension = Path.GetFileNameWithoutExtension fileName
+        if fileNameWithoutExtension.Contains(file) && not (fileNameWithoutExtension = file) then
+            File.Delete fileName
+
+    for fileName in allFiles do
+        if (file = Path.GetFileNameWithoutExtension fileName) then
+            let newName = fileName.Insert(fileName.Length - 4, sprintf ".%s" finalVersion)
+            File.Move(fileName, newName)
+            
+
+let private setVersionToDll config (node : XmlNode) finalVersion = 
+    let path = node.Attributes.Item(0).InnerText
+    let file = Path.GetFileNameWithoutExtension path
+    if (file.Substring(0, 2) = "YC") then
+        renameDll config file finalVersion
+
 let private updateDeployNuspec config (file:string) =
     let xdoc = new XmlDocument()
     ReadFileAsString file |> xdoc.LoadXml
@@ -74,20 +96,34 @@ let private updateDeployNuspec config (file:string) =
 
     let semVer = SemVerHelper.parse(versionNode.InnerText.ToString())
 
-    let fileVersion = new Version(semVer.Major, semVer.Minor, semVer.Patch, 0)
+    let semVerSplitByDot = versionNode.InnerText.Split('.')
+    let suffix = semVerSplitByDot.[semVerSplitByDot.Length - 1]
+    let suffixSplitByHyphen = suffix.Split('-')
+    let mutable buildNumber = 0
+    if suffixSplitByHyphen.Length > 1 then 
+        buildNumber <- (suffixSplitByHyphen.[2] |> int)
+    else 
+        buildNumber <- (suffixSplitByHyphen.[0] |> int)
 
-    versionNode.InnerText <- (constructInfoVersion config fileVersion file)
-    
+    let fileVersion = new Version(semVer.Major, semVer.Minor, semVer.Patch, buildNumber)
+    let finalVersion = constructInfoVersion config fileVersion file
+
+    versionNode.InnerText <- finalVersion
     WriteStringToFile false file (xdoc.OuterXml.ToString().Replace("><",">\n<"))
 
-let update config _ =
-    !+ "./**/AssemblyInfo.cs"
-    ++ "./**/AssemblyInfo.vb"
-    ++ "./**/AssemblyInfo.fs"
-    ++ "./**/AssemblyInfo.vb"
-        |> Scan
+    let listNodes = xdoc.SelectNodes("/package/files/file")
+    for node in listNodes do 
+        setVersionToDll config node finalVersion
+
+
+let update (config : Map<string, string>) _ =
+    //!+ "./**/AssemblyInfo.cs"
+    //++ "./**/AssemblyInfo.vb"
+    !! (sprintf @"%s" (config.get "packaging:assemblyinfopath"))
+    //++ "./**/AssemblyInfo.vb"
+        //|> Scan
         |> Seq.iter (updateAssemblyInfo config)
 
-let updateDeploy config _ =
-    !! "./**/Deploy/*.nuspec"
+let updateDeploy (config : Map<string, string>) _ =
+    !! (sprintf @"%s" (config.get "packaging:nuspecpath"))
         |> Seq.iter (updateDeployNuspec config)

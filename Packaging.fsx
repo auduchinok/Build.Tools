@@ -1,11 +1,11 @@
-#r "./fake/fakelib.dll"
+#r @"./fake/fakelib.dll"
 #r "System.Xml.Linq.dll"
-#r "System.IO.Compression.dll"
+//#r "System.IO.Compression.dll"
 #load "./Utils.fsx"
 
 open System
 open System.IO
-open System.IO.Compression
+//open System.IO.Compression
 open System.Text.RegularExpressions
 open System.Xml.Linq
 open Fake
@@ -22,7 +22,6 @@ let private filterPackageable proj =
                 | _ -> None)
 
 let private packageProject (config: Map<string, string>) outputDir proj =
-
     let outputDirFull = match config.TryFind "packaging:outputsubdirs" with
                         | Some "true" -> outputDir + "\\" + Path.GetFileNameWithoutExtension(proj)
                         | _ -> outputDir
@@ -45,7 +44,6 @@ let private packageProject (config: Map<string, string>) outputDir proj =
     if result <> 0 then failwithf "Error packaging NuGet package. Project file: %s" proj
 
 let private packageDeployment (config: Map<string, string>) outputDir proj =
-
     let outputDirFull = match config.TryFind "packaging:outputsubdirs" with
                         | Some "true" -> outputDir + "\\" + Path.GetFileNameWithoutExtension(proj)
                         | _ -> outputDir
@@ -156,14 +154,14 @@ let CleanDirOnce dir =
 let package (config : Map<string, string>) _ =
     CleanDirOnce (config.get "packaging:output")
 
-    !! "./**/*.*proj"
+    !! (sprintf @"%s" (config.get "packaging:nuspecpath"))
         |> Seq.choose filterPackageable
         |> Seq.iter (packageProject config (config.get "packaging:output"))
 
 let packageDeploy (config : Map<string, string>) _ =
     CleanDirOnce (config.get "packaging:deployoutput")
 
-    !! "./**/Deploy/*.nuspec"
+    !! (sprintf @"%s" (config.get "packaging:nuspecpath"))
         |> Seq.iter (packageDeployment config (config.get "packaging:deployoutput"))
 
 let push (config : Map<string, string>) _ =
@@ -203,19 +201,19 @@ let private applyConstraint (xml:string) =
         |> Seq.iter (fun (e, v) -> e.SetAttributeValue(xn "version", v))
     doc.ToString()
 
-let private transform nuSpec f =
-    use xp = new ZipArchive(new FileStream(nuSpec, FileMode.Open), ZipArchiveMode.Update)
-    let entry =
-        xp.Entries
-        |> Seq.find (fun x -> x.Name.EndsWith (".nuspec"))
-    let (text:string) =
-        use sr = new StreamReader(entry.Open())
-        sr.ReadToEnd() |> f
-    use w = new StreamWriter(entry.Open())
-    w.Write text
-    w.BaseStream.SetLength(w.BaseStream.Position)
+//let private transform nuSpec f =
+//    use xp = new ZipArchive(new FileStream(nuSpec, FileMode.Open), ZipArchiveMode.Update)
+//    let entry =
+//        xp.Entries
+//        |> Seq.find (fun x -> x.Name.EndsWith (".nuspec"))
+//    let (text:string) =
+//        use sr = new StreamReader(entry.Open())
+//        sr.ReadToEnd() |> f
+//    use w = new StreamWriter(entry.Open())
+//    w.Write text
+//    w.BaseStream.SetLength(w.BaseStream.Position)
         
 //constrains a nuget package to sensible dependency ranges
-let constrain (config : Map<string, string>) () =
-    !! (config.get "packaging:output" @@ "./**/*.nupkg")
-    |> Seq.iter (fun f -> transform f applyConstraint)
+//let constrain (config : Map<string, string>) () =
+//    !! (config.get "packaging:output" @@ "./**/*.nupkg")
+//    |> Seq.iter (fun f -> transform f applyConstraint)

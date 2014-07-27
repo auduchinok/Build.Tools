@@ -1,4 +1,4 @@
-#r    "./fake/fakelib.dll"
+#r    @"./fake/fakelib.dll"
 
 open Fake
 open System
@@ -13,9 +13,11 @@ type Map<'Key,'Value when 'Key : comparison> with
         this |> Map.find name
 
 let ensureNunitRunner (config : Map<string, string>) =
+  let dir = config.get "core:tools" @@ nunitRunners
+  printf "\n\nDIR  =  %s\n\n" dir  
   if not (directoryExists <| config.get "core:tools" @@ nunitRunners) then
      let args =
-         sprintf "install NUnit.Runners -ExcludeVersion -OutputDirectory \"%s\""
+         sprintf "Install NUnit.Runners -ExcludeVersion -OutputDirectory \"%s\""
              (config.get "core:tools")
      let result =
          ExecProcess (fun info ->

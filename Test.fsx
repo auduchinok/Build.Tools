@@ -1,12 +1,13 @@
-#r "./fake/fakelib.dll"
+#r @"./fake/fakelib.dll"
 #load "./Utils.fsx"
 
 open Fake
 open Utils
 open System
+open System.IO
 
 let run (config : Map<string, string>) _ =
-    let testDlls = !! (sprintf @".\**\bin\%s\**\*.Tests.dll" (config.get "build:configuration"))
+    let testDlls = !! (sprintf @"%s" (config.get "test:path"))
     if Seq.length testDlls > 0 then
         ensureNunitRunner config
         testDlls
