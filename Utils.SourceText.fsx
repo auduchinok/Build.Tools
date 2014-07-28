@@ -11,6 +11,7 @@ let pathToDll = @"..\Bin\Release\v40"
 let pathToSolution = @"..\src\YC.Utils.SourceText.sln"
 let pathToTests = @"..\Bin\Release\v40\Utils.SourceText.Tests.dll"
 let pathToTools = @"..\tools\Build.Tools"
+let pathToPackages = @"..\src\packages"
 let pathToNuspec = @"..\src\YC.Utils.SourceText\Utils.SourceText.nuspec"
 let pathToNuspecFromRoot = @"src\YC.Utils.SourceText\Utils.SourceText.nuspec"
 let pathToAssembleyInfo = @"..\src\YC.Utils.SourceText\AssemblyInfo.fs"
@@ -32,8 +33,10 @@ let configList = "config --list"
 config.["build:solution"] <- pathToSolution
 config.["core:tools"] <- pathToTools
 config.["bin:path"] <-pathToDll
+config.["repo:path"] <- pathToRepository
 config.["test:path"] <- pathToTests
 config.["packaging:nuspecpath"] <- pathToNuspec
+config.["packaging:packages"] <- pathToPackages
 config.["packaging:assemblyinfopath"] <- pathToAssembleyInfo
 config.["packaging:deploypushurl"] <- pushURL
 config.["packaging:deployapikey"] <- pushApiKey
@@ -53,21 +56,23 @@ Target "Commit" (fun _ ->
 Target "PushChanges" (fun _ ->
     gitCommand pathToRepository gitCommandToPush
 )
-Target "Clean"          <| Solution.clean (mapOfDict config)
-Target "Build"          <| Solution.build (mapOfDict config)
-Target "TestRun"        <| Test.run (mapOfDict config)
-Target "Package"        <| Packaging.packageDeploy (mapOfDict config)
-Target "PushPackage"    <| Packaging.pushDeploy (mapOfDict config)
-Target "Def"            <| DoNothing
+Target "RestorePackages"    <| Packaging.restore (mapOfDict config)
+Target "Clean"              <| Solution.clean (mapOfDict config)
+Target "Build"              <| Solution.build (mapOfDict config)
+Target "TestRun"            <| Test.run (mapOfDict config)
+Target "Package"            <| Packaging.packageDeploy (mapOfDict config)
+Target "PushPackage"        <| Packaging.pushDeploy (mapOfDict config)
+Target "DefaultTarget"      <| DoNothing
 
-"Clean"
+"RestorePackages"
+    ==> "Clean"
     ==> "Build"
     ==> "TestRun"
     ==> "Version"
     ==> "Package"
     ==> "PushPackage"
-    ==> "Commit"
-    ==> "PushChanges"
-    ==> "Def"
+    //==> "Commit"
+    //==> "PushChanges"
+    ==> "DefaultTarget"
 
-RunParameterTargetOrDefault "target" "Def"
+RunParameterTargetOrDefault "target" "DefaultTarget"
