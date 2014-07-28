@@ -27,6 +27,8 @@ let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@github.com/Yac
 let gitConfigUser = sprintf "config --global user.email \"%s\"" gitEmail
 let gitConfigEmail = sprintf "config --global user.name \"%s\"" gitUserName
 
+let configList = "config --list"
+
 config.["build:solution"] <- pathToSolution
 config.["core:tools"] <- pathToTools
 config.["bin:path"] <-pathToDll
@@ -43,6 +45,8 @@ Target "Version" (fun x ->
 Target "Commit" (fun _ ->
     //gitCommand pathToRepository gitConfigUser
     //gitCommand pathToRepository gitConfigEmail
+
+    gitCommand pathToRepository configList
 
     gitCommand pathToRepository gitCommandToCommit
 )
