@@ -73,8 +73,10 @@ let private installPackageOptions (config: Map<string, string>) =
        sprintf @"-OutputDirectory ""%s""" packagePath 
 
 let private restorePackages (config: Map<string, string>) file =
+
     let timeOut = TimeSpan.FromMinutes 5.
     let args = sprintf @"install ""%s"" %s" file (installPackageOptions config)
+
     let result = ExecProcess (fun info ->
                         info.FileName <- config.get "core:tools" @@ nuget
                         info.WorkingDirectory <- Path.GetFullPath(".")
@@ -137,8 +139,8 @@ let pushPackages (config: Map<string, string>) pushto pushdir pushurl apikey nup
         if isNullOrEmpty pushurl || isNullOrEmpty apikey then failwith "You must specify both apikey and pushurl to push NuGet packages with the pushto=url option."
         pushPackagesToUrl config pushurl apikey nupkg
 
-let restore config _ =
-    !! "./**/packages.config"
+let restore (config : Map<string, string>) _ =
+    !! (sprintf @"%s" (config.get "repo:path" + "\**\packages.config"))
         |> Seq.iter (restorePackages config)
 
 let update config _ =
