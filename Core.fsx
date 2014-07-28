@@ -17,6 +17,7 @@ let config =
         "build:solution",               environVar          "solution"
         "core:tools",                   environVar          "tools"
         "bin:path",                     environVarOrDefault "bin"                   ""
+        "repo:path",                    environVarOrDefault "repo"                  ""    
         "packaging:output",             environVarOrDefault "output"                (sprintf "%s\output" (Path.GetFullPath(".")))
         "packaging:deployoutput",       environVarOrDefault "deployoutput"          (sprintf "%s\packages" (Path.GetFullPath(".")))
         "packaging:outputsubdirs",      environVarOrDefault "outputsubdirs"         "false"
