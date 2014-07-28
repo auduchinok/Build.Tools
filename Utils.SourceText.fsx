@@ -58,12 +58,12 @@ Target "Def"            <| DoNothing
 
 "Clean"
     ==> "Build"
-    //==> "TestRun"
+    ==> "TestRun"
     ==> "Version"
     ==> "Package"
-    //==> "PushPackage"
-    //==> "Commit"
-    //==> "PushChanges"
+    ==> "PushPackage"
+    ==> "Commit"
+    ==> "PushChanges"
     ==> "Def"
 
 RunParameterTargetOrDefault "target" "Def"
