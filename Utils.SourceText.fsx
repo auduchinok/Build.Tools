@@ -43,9 +43,9 @@ Target "Version" (fun x ->
     Versioning.updateDeploy (mapOfDict config) x
 )
 Target "Commit" (fun _ ->
-    //gitCommand pathToRepository gitConfigUser
-    //gitCommand pathToRepository gitConfigEmail
-
+    gitCommand pathToRepository configList
+    gitCommand pathToRepository gitConfigUser
+    gitCommand pathToRepository gitConfigEmail
     gitCommand pathToRepository configList
 
     gitCommand pathToRepository gitCommandToCommit
