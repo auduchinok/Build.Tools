@@ -72,8 +72,9 @@ let private renameDll (config : Map<string,string>) file finalVersion=
     let allFiles = Directory.GetFiles(pathToDll)
 
     for fileName in allFiles do
+        let test = "Test"
         let fileNameWithoutExtension = Path.GetFileNameWithoutExtension fileName
-        if fileNameWithoutExtension.Contains(file) && not (fileNameWithoutExtension = file) then
+        if fileNameWithoutExtension.Contains(file) && not (fileNameWithoutExtension = file) && not (fileNameWithoutExtension.Contains(test)) then
             File.Delete fileName
 
     for fileName in allFiles do
