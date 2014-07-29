@@ -9,6 +9,7 @@
 open System.IO
 open System.Collections.Generic
 open Fake
+open Fake.Git
 
 let config = 
     let dict = new Dictionary<_,_>()
@@ -44,20 +45,82 @@ let config =
     dict
 
 let mapOfDict (dict : Dictionary<_,_>) =
-    dict |> Seq.map (fun kvp -> kvp.Key, kvp.Value) |> Map.ofSeq  
+    dict |> Seq.map (fun kvp -> kvp.Key, kvp.Value) |> Map.ofSeq
 
-// Target definitions
-//Target "Default"           <| DoNothing
-//Target "Packaging:Package" <| Packaging.package (mapOfDict config)
-//Target "Packaging:Restore" <| Packaging.restore (mapOfDict config)
-//Target "Packaging:Update"  <| Packaging.update (mapOfDict config)
-//Target "Packaging:Push"    <| Packaging.push (mapOfDict config)
-//Target "Solution:Build"    <| Solution.build (mapOfDict config)
-//Target "Solution:Clean"    <| Solution.clean (mapOfDict config)
-//Target "Versioning:Update" <| Versioning.update (mapOfDict config)
-//Target "Test:Run"          <| Test.run (mapOfDict config)
-//Target "SpecFlow:Run"      <| Specflow.run (mapOfDict config)
-//
+
+type SpecificConfig = 
+    struct
+        val PathToRepository: string
+        val PathToDll: string
+        val PathToSolution: string
+        val PathToTests: string
+        val PathToTools: string
+        val PathToPackages: string
+        val PathToNuspec: string
+        val PathToNuspecFromRoot: string
+        val PathToAssembleyInfo: string
+        val PathToAssembleyInfoFromRoot: string
+
+        new(repo: string, dll: string, sol: string, test: string, tool: string, pack: string, nusp: string, nusproot: string, assem: string, assemroot: string) = { 
+             PathToRepository = repo;
+             PathToDll = dll;
+             PathToSolution = sol;
+             PathToTests = test;
+             PathToTools = tool;
+             PathToPackages = pack;
+             PathToNuspec = nusp;
+             PathToNuspecFromRoot = nusproot;
+             PathToAssembleyInfo = assem;
+             PathToAssembleyInfoFromRoot = assemroot
+        }
+    end
+
+let pushURL = @"https://www.myget.org/F/yc/api/v2/package"
+let pushApiKey = @"f6ba9139-9d42-4cf1-acaf-344f963ff807"
+
+let commitMessage = @"Change version of package in AssemblyInfo and Nuspec files"
+let gitUserName = "YcGeneralUser"
+let gitPassword = "yc2GeneralUser2014"
+let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@github.com/YaccConstructor/YC.Utils.SourceText.git" gitUserName gitPassword
+
+let commonConfig (tools : SpecificConfig) = 
+    let gitCommandToCommit = sprintf "commit -m \"%s\" \"%s\" \"%s\"" commitMessage tools.PathToAssembleyInfoFromRoot tools.PathToNuspecFromRoot
+
+    config.["build:solution"] <- tools.PathToSolution
+    config.["core:tools"] <- tools.PathToTools
+    config.["bin:path"] <- tools.PathToDll
+    config.["repo:path"] <- tools.PathToRepository
+    config.["test:path"] <- tools.PathToTests
+    config.["packaging:nuspecpath"] <- tools.PathToNuspec
+    config.["packaging:packages"] <- tools.PathToPackages
+    config.["packaging:assemblyinfopath"] <- tools.PathToAssembleyInfo
+
+    config.["packaging:deploypushurl"] <- pushURL
+    config.["packaging:deployapikey"] <- pushApiKey
+
+    Target "Versioning:Update" (fun x ->
+        Versioning.update (mapOfDict config) x
+        Versioning.updateDeploy (mapOfDict config) x
+    )
+    Target "Git:Commit" (fun _ ->
+        gitCommand tools.PathToRepository gitCommandToCommit
+    )
+    Target "Git:Push" (fun _ ->
+        gitCommand tools.PathToRepository gitCommandToPush
+    )
+
+    Target "Default"           <| DoNothing
+    Target "Packaging:Package" <| Packaging.packageDeploy (mapOfDict config)
+    Target "Packaging:Restore" <| Packaging.restore (mapOfDict config)
+    Target "Packaging:Update"  <| Packaging.update (mapOfDict config)
+    Target "Packaging:Push"    <| Packaging.pushDeploy (mapOfDict config)
+    Target "Solution:Build"    <| Solution.build (mapOfDict config)
+    Target "Solution:Clean"    <| Solution.clean (mapOfDict config)
+    Target "Test:Run"          <| Test.run (mapOfDict config)
+    //Target "SpecFlow:Run"      <| Specflow.run (mapOfDict config)
+
+
+
 // Build order
 //"Packaging:Restore"
 //    ==> "Solution:Clean"
