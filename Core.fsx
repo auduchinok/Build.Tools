@@ -47,26 +47,26 @@ let mapOfDict (dict : Dictionary<_,_>) =
     dict |> Seq.map (fun kvp -> kvp.Key, kvp.Value) |> Map.ofSeq  
 
 // Target definitions
-Target "Default"           <| DoNothing
-Target "Packaging:Package" <| Packaging.package (mapOfDict config)
-Target "Packaging:Restore" <| Packaging.restore (mapOfDict config)
-Target "Packaging:Update"  <| Packaging.update (mapOfDict config)
-Target "Packaging:Push"    <| Packaging.push (mapOfDict config)
-Target "Solution:Build"    <| Solution.build (mapOfDict config)
-Target "Solution:Clean"    <| Solution.clean (mapOfDict config)
-Target "Versioning:Update" <| Versioning.update (mapOfDict config)
-Target "Test:Run"          <| Test.run (mapOfDict config)
-Target "SpecFlow:Run"      <| Specflow.run (mapOfDict config)
-
+//Target "Default"           <| DoNothing
+//Target "Packaging:Package" <| Packaging.package (mapOfDict config)
+//Target "Packaging:Restore" <| Packaging.restore (mapOfDict config)
+//Target "Packaging:Update"  <| Packaging.update (mapOfDict config)
+//Target "Packaging:Push"    <| Packaging.push (mapOfDict config)
+//Target "Solution:Build"    <| Solution.build (mapOfDict config)
+//Target "Solution:Clean"    <| Solution.clean (mapOfDict config)
+//Target "Versioning:Update" <| Versioning.update (mapOfDict config)
+//Target "Test:Run"          <| Test.run (mapOfDict config)
+//Target "SpecFlow:Run"      <| Specflow.run (mapOfDict config)
+//
 // Build order
-"Packaging:Restore"
-    ==> "Solution:Clean"
-    ==> "Versioning:Update"
-    ==> "Solution:Build"
-    ==> "Packaging:Package"
-    ==> "SpecFlow:Run"
-    ==> "Test:Run"
-    =?> ("Packaging:Push", not isLocalBuild)
-    ==> "Default"
+//"Packaging:Restore"
+//    ==> "Solution:Clean"
+//    ==> "Versioning:Update"
+//    ==> "Solution:Build"
+//    ==> "Packaging:Package"
+//    ==> "SpecFlow:Run"
+//    ==> "Test:Run"
+//    =?> ("Packaging:Push", not isLocalBuild)
+//    ==> "Default"
 
 //RunParameterTargetOrDefault "target" "Default"
