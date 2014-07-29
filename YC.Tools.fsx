@@ -16,8 +16,11 @@ let pathToNuspec = @"..\src\YC.FsYacc\YC.Tools.nuspec"
 let pathToNuspecFromRoot = @"src\YC.FsYacc\YC.Tools.nuspec"
 let pathToAssembleyInfo = @"..\src\YC.FsYacc\AssemblyInfo.fs"
 let pathToAssembleyInfoFromRoot = @"src\YC.FsYacc\AssemblyInfo.fs"
+let gitUserName = "yc.TeamCity"
+let gitPassword = "my9UX2ka7XB3"
+let gitRepo = "code.google.com/p/recursive-ascent/"
 
-let specConfig = new SpecificConfig(pathToRepository, pathToDll, pathToSolution, pathToTests, pathToTools, pathToPackages, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot)
+let specConfig = new SpecificConfig(pathToRepository, pathToDll, pathToSolution, pathToTests, pathToTools, pathToPackages, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, gitUserName, gitPassword, gitRepo)
 commonConfig specConfig
 
 "Packaging:Restore"
