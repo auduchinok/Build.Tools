@@ -60,8 +60,11 @@ type SpecificConfig =
         val PathToNuspecFromRoot: string
         val PathToAssembleyInfo: string
         val PathToAssembleyInfoFromRoot: string
+        val GitUserName: string
+        val GitPassword: string
+        val GitRepo: string
 
-        new(repo: string, dll: string, sol: string, test: string, tool: string, pack: string, nusp: string, nusproot: string, assem: string, assemroot: string) = { 
+        new(repo: string, dll: string, sol: string, test: string, tool: string, pack: string, nusp: string, nusproot: string, assem: string, assemroot: string, gituser: string, gitpass: string, gitrepo: string) = { 
              PathToRepository = repo;
              PathToDll = dll;
              PathToSolution = sol;
@@ -72,6 +75,9 @@ type SpecificConfig =
              PathToNuspecFromRoot = nusproot;
              PathToAssembleyInfo = assem;
              PathToAssembleyInfoFromRoot = assemroot
+             GitUserName = gituser
+             GitPassword = gitpass
+             GitRepo = gitrepo
         }
     end
 
@@ -79,12 +85,10 @@ let pushURL = @"https://www.myget.org/F/yc/api/v2/package"
 let pushApiKey = @"f6ba9139-9d42-4cf1-acaf-344f963ff807"
 
 let commitMessage = @"Change version of package in AssemblyInfo and Nuspec files"
-let gitUserName = "YcGeneralUser"
-let gitPassword = "yc2GeneralUser2014"
-let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@github.com/YaccConstructor/YC.Utils.SourceText.git" gitUserName gitPassword
 
 let commonConfig (tools : SpecificConfig) = 
     let gitCommandToCommit = sprintf "commit -m \"%s\" \"%s\" \"%s\"" commitMessage tools.PathToAssembleyInfoFromRoot tools.PathToNuspecFromRoot
+    let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@\"%s\"" tools.GitUserName tools.GitPassword tools.GitRepo
 
     config.["build:solution"] <- tools.PathToSolution
     config.["core:tools"] <- tools.PathToTools
