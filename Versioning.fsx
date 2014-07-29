@@ -79,15 +79,27 @@ let private renameDll (config : Map<string,string>) file finalVersion=
 
     for fileName in allFiles do
         if (file = Path.GetFileNameWithoutExtension fileName) then
-            let newName = fileName.Insert(fileName.Length - 4, sprintf ".%s" finalVersion)
-            File.Move(fileName, newName)
-            
+            let fileExtensionLength = Path.GetExtension fileName |> String.length
+            let newName = fileName.Insert(fileName.Length - fileExtensionLength, sprintf ".%s" finalVersion)
+            File.Move(fileName, newName)    
 
 let private setVersionToDll config (node : XmlNode) finalVersion = 
     let path = node.Attributes.Item(0).InnerText
     let file = Path.GetFileNameWithoutExtension path
     if (file.Substring(0, 2) = "YC") then
         renameDll config file finalVersion
+
+let private setVersionToReferences (node : XmlNode) (finalVersion : string) = 
+    let file = node.Attributes.Item(0).InnerText
+    let fileExtension = Path.GetExtension file
+    let fileNameWithoutExtension = Path.GetFileNameWithoutExtension file
+
+    let fileNameSplitByDot = fileNameWithoutExtension.Split('.')
+    let finalVersionSplitByDot = finalVersion.Split('.')
+    fileNameSplitByDot.[fileNameSplitByDot.Length - 1] <- finalVersionSplitByDot.[finalVersionSplitByDot.Length - 1]
+
+    String.concat "." fileNameSplitByDot + fileExtension
+
 
 let private updateDeployNuspec config (file:string) =
     let xdoc = new XmlDocument()
@@ -110,11 +122,18 @@ let private updateDeployNuspec config (file:string) =
     let finalVersion = constructInfoVersion config fileVersion file
 
     versionNode.InnerText <- finalVersion
-    WriteStringToFile false file (xdoc.OuterXml.ToString().Replace("><",">\n<"))
 
-    let listNodes = xdoc.SelectNodes("/package/files/file")
-    for node in listNodes do 
+    let listFileNodes = xdoc.SelectNodes("/package/files/file")
+    for node in listFileNodes do 
         setVersionToDll config node finalVersion
+
+    let listRefNodes = xdoc.SelectNodes("/package/metadata/references/reference")
+    if listRefNodes.Count <> 0 then
+        for node in listRefNodes do
+            let newName = setVersionToReferences node finalVersion
+            node.Attributes.Item(0).InnerText <- newName
+
+    WriteStringToFile false file (xdoc.OuterXml.ToString().Replace("><",">\n<"))
 
 
 let update (config : Map<string, string>) _ =
