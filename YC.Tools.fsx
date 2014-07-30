@@ -6,12 +6,7 @@ open Fake.Git
 open Core
 open System.IO
 
-let pathToRepository = @".."
-let pathToDll = @"..\Bin\Release\v40"
 let pathToSolution = @"..\src\YC.Tools.sln"
-let pathToTests = @"..\Bin\Release\v40\*.Test.dll"
-let pathToTools = @"..\tools\Build.Tools"
-let pathToPackages = @"..\src\packages"
 let pathToNuspec = @"..\src\FsYacc\YC.Tools.nuspec"
 let pathToNuspecFromRoot = @"src\FsYacc\YC.Tools.nuspec"
 let pathToAssembleyInfo = @"..\src\FsYacc\AssemblyInfo.fs"
@@ -20,7 +15,7 @@ let gitUserName = "yc.TeamCity"
 let gitPassword = "my9UX2ka7XB3"
 let gitRepo = "code.google.com/p/recursive-ascent/"
 
-let specConfig = new SpecificConfig(pathToRepository, pathToDll, pathToSolution, pathToTests, pathToTools, pathToPackages, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, gitUserName, gitPassword, gitRepo)
+let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, gitUserName, gitPassword, gitRepo)
 commonConfig specConfig
 
 "Packaging:Restore"
