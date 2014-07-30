@@ -72,11 +72,16 @@ let private installPackageOptions (config: Map<string, string>) =
     else
        sprintf @"-OutputDirectory ""%s""" packagePath 
 
-let private restorePackages (config: Map<string, string>) file =
+let private nugetConfigOption (config: Map<string, string>) =
+    let nugetConfigPath = (config.get "packaging:nugetconfig")
+    if isNullOrEmpty nugetConfigPath then
+        ""
+    else
+       sprintf @"-ConfigFile ""%s""" nugetConfigPath 
 
+let private restorePackages (config: Map<string, string>) file =
     let timeOut = TimeSpan.FromMinutes 5.
-    let nuGetConfig = sprintf @"-ConfigFile %s" (config.get "packaging:nugetconfig")
-    let args = sprintf @"install ""%s"" %s %s" file (installPackageOptions config) nuGetConfig
+    let args = sprintf @"install ""%s"" %s %s" file (installPackageOptions config) (nugetConfigOption config)
 
     let result = ExecProcess (fun info ->
                         info.FileName <- config.get "core:tools" @@ nuget
