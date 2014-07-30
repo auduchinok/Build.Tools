@@ -34,6 +34,7 @@ let config =
         "packaging:packages",           environVarOrDefault "packages"              ""
         "packaging:assemblyinfopath",   environVarOrDefault "assemblyinfo"          ""
         "packaging:nuspecpath",         environVarOrDefault "nuspec"                ""
+        "packaging:nugetconfig",        environVarOrDefault "nugetconfig"           ""
         "test:path",                    environVarOrDefault "tests"                 ""
         "versioning:build",             environVarOrDefault "build_number"          "0"
         "versioning:branch",            match environVar "teamcity_build_branch" with
@@ -60,24 +61,50 @@ type SpecificConfig =
         val PathToNuspecFromRoot: string
         val PathToAssembleyInfo: string
         val PathToAssembleyInfoFromRoot: string
+        val PathToNugetConfig: string
         val GitUserName: string
         val GitPassword: string
         val GitRepo: string
 
-        new(repo: string, dll: string, sol: string, test: string, tool: string, pack: string, nusp: string, nusproot: string, assem: string, assemroot: string, gituser: string, gitpass: string, gitrepo: string) = { 
-             PathToRepository = repo;
-             PathToDll = dll;
-             PathToSolution = sol;
-             PathToTests = test;
-             PathToTools = tool;
-             PathToPackages = pack;
-             PathToNuspec = nusp;
-             PathToNuspecFromRoot = nusproot;
-             PathToAssembleyInfo = assem;
-             PathToAssembleyInfoFromRoot = assemroot
-             GitUserName = gituser
-             GitPassword = gitpass
-             GitRepo = gitrepo
+        new(sol: string, nusp: string, nusproot: string, assem: string, assemroot: string, gituser: string, gitpass: string, gitrepo: string, ?repo: string, ?dll: string, ?test: string, ?tool: string, ?pack: string, ?nugetconf: string) = {           
+            PathToSolution = sol
+            PathToNuspec = nusp
+            PathToNuspecFromRoot = nusproot
+            PathToAssembleyInfo = assem
+            PathToAssembleyInfoFromRoot = assemroot
+            GitUserName = gituser
+            GitPassword = gitpass
+            GitRepo = gitrepo
+
+            PathToRepository =
+                match repo with
+                | Some x -> x
+                | None -> @".."
+
+            PathToDll = 
+                match dll with
+                | Some x -> x
+                | None -> @"..\Bin\Release\v40"
+
+            PathToTests = 
+                match test with
+                | Some x -> x
+                | None -> @"..\Bin\Release\v40\*.Tests.dll"
+
+            PathToTools =
+                match tool with
+                | Some x -> x
+                | None -> @"..\tools\Build.Tools"
+
+            PathToPackages =
+                match pack with
+                | Some x -> x
+                | None -> @"..\src\packages"
+
+            PathToNugetConfig = 
+                match nugetconf with
+                | Some x -> x
+                | None -> @"..\src\NuGet.config"    
         }
     end
 
@@ -98,6 +125,7 @@ let commonConfig (tools : SpecificConfig) =
     config.["packaging:nuspecpath"] <- tools.PathToNuspec
     config.["packaging:packages"] <- tools.PathToPackages
     config.["packaging:assemblyinfopath"] <- tools.PathToAssembleyInfo
+    config.["packaging:nugetconfig"] <- tools.PathToNugetConfig
 
     config.["packaging:deploypushurl"] <- pushURL
     config.["packaging:deployapikey"] <- pushApiKey
