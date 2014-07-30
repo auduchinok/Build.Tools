@@ -75,7 +75,8 @@ let private installPackageOptions (config: Map<string, string>) =
 let private restorePackages (config: Map<string, string>) file =
 
     let timeOut = TimeSpan.FromMinutes 5.
-    let args = sprintf @"install ""%s"" %s" file (installPackageOptions config)
+    let nuGetConfig = sprintf @"-ConfigFile %s" (config.get "packaging:nugetconfig")
+    let args = sprintf @"install ""%s"" %s %s" file (installPackageOptions config) nuGetConfig
 
     let result = ExecProcess (fun info ->
                         info.FileName <- config.get "core:tools" @@ nuget
