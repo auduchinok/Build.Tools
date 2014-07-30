@@ -6,21 +6,17 @@ open Fake.Git
 open Core
 open System.IO
 
-let pathToRepository = @".."
-let pathToDll = @"..\Bin\Release\v40"
 let pathToSolution = @"..\src\YC.Utils.SourceText.sln"
-let pathToTests = @"..\Bin\Release\v40\*.Tests.dll"
-let pathToTools = @"..\tools\Build.Tools"
-let pathToPackages = @"..\src\packages"
 let pathToNuspec = @"..\src\Utils.SourceText\Utils.SourceText.nuspec"
 let pathToNuspecFromRoot = @"src\Utils.SourceText\Utils.SourceText.nuspec"
 let pathToAssembleyInfo = @"..\src\Utils.SourceText\AssemblyInfo.fs"
 let pathToAssembleyInfoFromRoot = @"src\Utils.SourceText\AssemblyInfo.fs"
+let pathToNugetConfig = ""
 let gitUserName = "YcGeneralUser"
 let gitPassword = "yc2GeneralUser2014"
 let gitRepo = "github.com/YaccConstructor/YC.Utils.SourceText.git"
 
-let specConfig = new SpecificConfig(pathToRepository, pathToDll, pathToSolution, pathToTests, pathToTools, pathToPackages, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, gitUserName, gitPassword, gitRepo)
+let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, gitUserName, gitPassword, gitRepo, nugetconf = pathToNugetConfig)
 commonConfig specConfig
 
 "Packaging:Restore"
