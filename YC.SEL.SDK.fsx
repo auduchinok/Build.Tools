@@ -14,11 +14,11 @@ let argsForYardFrontendGen = @""
 let pathToMinimalSolution = @"..\src\YC.SEL.SDK.Minimal.sln"
 
 let pathToRNGLRAbstractParserTestGenLex = @"..\src\RNGLRAbstractParser.Test\gen_lex.cmd"
-let pathToWorkingDirForRNGLRAbstractParserTestGenLex = @"..\src\YardFrontend"
+let pathToWorkingDirForRNGLRAbstractParserTestGenLex = @"..\src\RNGLRAbstractParser.Test"
 let argsForRNGLRAbstractParserTestGenLex = @"40"
 
 let pathToRNGLRAbstractParserTestGen = @"..\src\RNGLRAbstractParser.Test\gen.cmd"
-let pathToWorkingDirForRNGLRAbstractParserTestGen = @"..\src\YardFrontend"
+let pathToWorkingDirForRNGLRAbstractParserTestGen = @"..\src\RNGLRAbstractParser.Test"
 let argsForRNGLRAbstractParserTestGen = @""
 
 let pathToRNGLRParserErrorRecoveryTestGen = @"..\src\RNGLRParser.ErrorRecoveryTest\gen.cmd"
@@ -71,19 +71,18 @@ let gitUserName = "yc.TeamCity"
 let gitPassword = "my9UX2ka7XB3"
 let gitRepo = "code.google.com/p/recursive-ascent/"
 
-let specConfig = new SpecificConfig(pathToMinimalSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, gitUserName, gitPassword, gitRepo)
+let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, gitUserName, gitPassword, gitRepo)
 commonConfig specConfig
 
-"Start"
-//"Packaging:Restore"
-    //==> "YardFrontend:Gen"
-    //==> "Mono.Addins:Xml"
-    //==> "Solution:CleanMinimal"
+"Packaging:Restore"
+    ==> "YardFrontend:Gen"
+    ==> "Mono.Addins:Xml"
+    ==> "Solution:CleanMinimal"
     ==> "Solution:BuildMinimal"
-    //==> "RNGLR:Test"
-    //==> "HighLighting:Run"
-    //==> "Solution:Clean"
-    //==> "Solution:Build"
+    ==> "RNGLR:Test"
+    ==> "HighLighting:Run"
+    ==> "Solution:Clean"
+    ==> "Solution:Build"
     //==> "Test:Run"
     //==> "Versioning:Update"
     //==> "Packaging:Package"
