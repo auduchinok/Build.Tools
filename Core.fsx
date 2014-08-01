@@ -6,19 +6,22 @@
 #load "./Test.fsx"
 #load "./Specflow.fsx"
 
+open System
 open System.IO
 open System.Collections.Generic
 open Fake
 open Fake.Git
+open Utils
 
 let config = 
     let dict = new Dictionary<_,_>()
     [
+        "bin:path",                     environVarOrDefault "bin"                   ""
         "build:configuration",          environVarOrDefault "configuration"         "Release"
         "build:solution",               environVar          "solution"
         "core:tools",                   environVar          "tools"
-        "bin:path",                     environVarOrDefault "bin"                   ""
-        "repo:path",                    environVarOrDefault "repo"                  ""    
+        "monoaddins:pathtonodes",       environVarOrDefault "addins"                ""
+        "monoaddins:pathtoconfigxml",   environVarOrDefault "addinsxml"             ""
         "packaging:output",             environVarOrDefault "output"                (sprintf "%s\output" (Path.GetFullPath(".")))
         "packaging:deployoutput",       environVarOrDefault "deployoutput"          (sprintf "%s\packages" (Path.GetFullPath(".")))
         "packaging:outputsubdirs",      environVarOrDefault "outputsubdirs"         "false"
@@ -35,6 +38,7 @@ let config =
         "packaging:assemblyinfopath",   environVarOrDefault "assemblyinfo"          ""
         "packaging:nuspecpath",         environVarOrDefault "nuspec"                ""
         "packaging:nugetconfig",        environVarOrDefault "nugetconfig"           ""
+        "repo:path",                    environVarOrDefault "repo"                  ""    
         "test:path",                    environVarOrDefault "tests"                 ""
         "versioning:build",             environVarOrDefault "build_number"          "0"
         "versioning:branch",            match environVar "teamcity_build_branch" with
@@ -44,9 +48,6 @@ let config =
     ]
     |> List.iter (fun (k,v) -> dict.Add(k,v))
     dict
-
-let mapOfDict (dict : Dictionary<_,_>) =
-    dict |> Seq.map (fun kvp -> kvp.Key, kvp.Value) |> Map.ofSeq
 
 
 type SpecificConfig = 
@@ -62,11 +63,14 @@ type SpecificConfig =
         val PathToAssembleyInfo: string
         val PathToAssembleyInfoFromRoot: string
         val PathToNugetConfig: string
+        val PathToAddinsNodesFromConfigXML: string
+        val PathToAddinsConfigXML: string
         val GitUserName: string
         val GitPassword: string
         val GitRepo: string
 
-        new(sol: string, nusp: string, nusproot: string, assem: string, assemroot: string, gituser: string, gitpass: string, gitrepo: string, ?repo: string, ?dll: string, ?test: string, ?tool: string, ?pack: string, ?nugetconf: string) = {           
+        new(sol: string, nusp: string, nusproot: string, assem: string, assemroot: string, gituser: string, gitpass: string, gitrepo: string, 
+            ?repo: string, ?dll: string, ?test: string, ?tool: string, ?pack: string, ?nugetconf: string, ?addins: string, ?addinsxml: string) = {           
             PathToSolution = sol
             PathToNuspec = nusp
             PathToNuspecFromRoot = nusproot
@@ -104,7 +108,17 @@ type SpecificConfig =
             PathToNugetConfig = 
                 match nugetconf with
                 | Some x -> x
-                | None -> @"..\src\NuGet.config"    
+                | None -> @"..\src\NuGet.config"
+
+            PathToAddinsNodesFromConfigXML = 
+                match addins with
+                | Some x -> x
+                | None -> @"../../../../../Bin/Release/v40/"
+
+            PathToAddinsConfigXML = 
+                match addinsxml with
+                | Some x -> x
+                | None -> @"..\src\packages\YaccConstructor.*\**\*.addins"    
         }
     end
 
@@ -117,18 +131,19 @@ let commonConfig (tools : SpecificConfig) =
     let gitCommandToCommit = sprintf "commit -m \"%s\" \"%s\" \"%s\"" commitMessage tools.PathToAssembleyInfoFromRoot tools.PathToNuspecFromRoot
     let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@\"%s\"" tools.GitUserName tools.GitPassword tools.GitRepo
 
+    config.["bin:path"] <- tools.PathToDll
     config.["build:solution"] <- tools.PathToSolution
     config.["core:tools"] <- tools.PathToTools
-    config.["bin:path"] <- tools.PathToDll
-    config.["repo:path"] <- tools.PathToRepository
-    config.["test:path"] <- tools.PathToTests
+    config.["monoaddins:pathtonodes"] <- tools.PathToAddinsNodesFromConfigXML
+    config.["monoaddins:pathtoconfigxml"] <- tools.PathToAddinsConfigXML
     config.["packaging:nuspecpath"] <- tools.PathToNuspec
     config.["packaging:packages"] <- tools.PathToPackages
     config.["packaging:assemblyinfopath"] <- tools.PathToAssembleyInfo
     config.["packaging:nugetconfig"] <- tools.PathToNugetConfig
-
     config.["packaging:deploypushurl"] <- pushURL
     config.["packaging:deployapikey"] <- pushApiKey
+    config.["repo:path"] <- tools.PathToRepository
+    config.["test:path"] <- tools.PathToTests
 
     Target "Versioning:Update" (fun x ->
         Versioning.update (mapOfDict config) x
@@ -141,14 +156,15 @@ let commonConfig (tools : SpecificConfig) =
         gitCommand tools.PathToRepository gitCommandToPush
     )
 
-    Target "Default"           <| DoNothing
-    Target "Packaging:Package" <| Packaging.packageDeploy (mapOfDict config)
-    Target "Packaging:Restore" <| Packaging.restore (mapOfDict config)
-    Target "Packaging:Update"  <| Packaging.update (mapOfDict config)
-    Target "Packaging:Push"    <| Packaging.pushDeploy (mapOfDict config)
-    Target "Solution:Build"    <| Solution.build (mapOfDict config)
-    Target "Solution:Clean"    <| Solution.clean (mapOfDict config)
-    Target "Test:Run"          <| Test.run (mapOfDict config)
+    Target "Default"            <| DoNothing
+    Target "Packaging:Package"  <| Packaging.packageDeploy (mapOfDict config)
+    Target "Packaging:Restore"  <| Packaging.restore (mapOfDict config)
+    Target "Packaging:Update"   <| Packaging.update (mapOfDict config)
+    Target "Packaging:Push"     <| Packaging.pushDeploy (mapOfDict config)
+    Target "Solution:Build"     <| Solution.build (mapOfDict config)
+    Target "Solution:Clean"     <| Solution.clean (mapOfDict config)
+    Target "Test:Run"           <| Test.run (mapOfDict config)
+    Target "Mono.Addins:Xml"    <| Utils.correctPathToAddins (mapOfDict config)
     //Target "SpecFlow:Run"      <| Specflow.run (mapOfDict config)
 
 
