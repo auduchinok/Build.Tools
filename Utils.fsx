@@ -2,6 +2,9 @@
 
 open Fake
 open System
+open System.IO
+open System.Xml
+open System.Collections.Generic
 open Microsoft.FSharp.Collections
 
 let nunitRunners = @"./NUnit.Runners/tools"
@@ -39,3 +42,25 @@ let ensureSpecFlowRunner (config : Map<string, string>) =
 
      if result <> 0 then
          failwith "SpecFlow Runner directory not found, and NuGet install failed."
+
+let mapOfDict (dict : Dictionary<_,_>) =
+    dict |> Seq.map (fun kvp -> kvp.Key, kvp.Value) |> Map.ofSeq
+
+let runCmd cmd workingDir args =
+    let result = 
+        ExecProcess (fun info ->
+            info.FileName <- Path.GetFullPath cmd
+            info.WorkingDirectory <- Path.GetFullPath workingDir
+            info.Arguments <- args) (TimeSpan.FromMinutes 5.)
+    if result <> 0 then failwithf "Error running cmd script. File: %s" cmd
+
+let private correctAddinsXml (config : Map<string, string>) file = 
+    let xdoc = new XmlDocument()
+    ReadFileAsString file |> xdoc.LoadXml
+    let pathToAddins = xdoc.SelectSingleNode "/Addins/Directory"
+    pathToAddins.InnerText <- config.get "monoaddins:pathtonodes"
+    WriteStringToFile false file (xdoc.OuterXml.ToString().Replace("><",">\n<"))
+
+let correctPathToAddins (config : Map<string, string>) _ =
+    !! (config.get "monoaddins:pathtoconfigxml")
+        |> Seq.iter (correctAddinsXml config)
