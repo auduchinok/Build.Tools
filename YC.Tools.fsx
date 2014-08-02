@@ -25,8 +25,8 @@ commonConfig specConfig
     ==> "Versioning:Update"
     ==> "Packaging:Package"
     =?> ("Packaging:Push", not isLocalBuild)
-    //=?> ("Git:Commit", not isLocalBuild)
-    //=?> ("Git:Push", not isLocalBuild)
+    =?> ("Git:Commit", not isLocalBuild)
+    =?> ("Git:Push", not isLocalBuild)
     ==> "Default"
 
 RunParameterTargetOrDefault "target" "Default"
