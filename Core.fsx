@@ -22,6 +22,8 @@ let config =
         "core:tools",                   environVar          "tools"
         "monoaddins:pathtonodes",       environVarOrDefault "addins"                ""
         "monoaddins:pathtoconfigxml",   environVarOrDefault "addinsxml"             ""
+        "git:user",                     environVarOrDefault "user"                  ""
+        "git:password",                 environVarOrDefault "password"              ""
         "packaging:output",             environVarOrDefault "output"                (sprintf "%s\output" (Path.GetFullPath(".")))
         "packaging:deployoutput",       environVarOrDefault "deployoutput"          (sprintf "%s\packages" (Path.GetFullPath(".")))
         "packaging:outputsubdirs",      environVarOrDefault "outputsubdirs"         "false"
@@ -65,19 +67,15 @@ type SpecificConfig =
         val PathToNugetConfig: string
         val PathToAddinsNodesFromConfigXML: string
         val PathToAddinsConfigXML: string
-        val GitUserName: string
-        val GitPassword: string
         val GitRepo: string
 
-        new(sol: string, nusp: string, nusproot: string, assem: string, assemroot: string, gituser: string, gitpass: string, gitrepo: string, 
+        new(sol: string, nusp: string, nusproot: string, assem: string, assemroot: string, gitrepo: string, 
             ?repo: string, ?dll: string, ?test: string, ?tool: string, ?pack: string, ?nugetconf: string, ?addins: string, ?addinsxml: string) = {           
             PathToSolution = sol
             PathToNuspec = nusp
             PathToNuspecFromRoot = nusproot
             PathToAssembleyInfo = assem
-            PathToAssembleyInfoFromRoot = assemroot
-            GitUserName = gituser
-            GitPassword = gitpass
+            PathToAssembleyInfoFromRoot = assemroot           
             GitRepo = gitrepo
 
             PathToRepository =
@@ -129,7 +127,8 @@ let commitMessage = @"Change version of package in AssemblyInfo and Nuspec files
 
 let commonConfig (tools : SpecificConfig) = 
     let gitCommandToCommit = sprintf "commit -m \"%s\" \"%s\" \"%s\"" commitMessage tools.PathToAssembleyInfoFromRoot tools.PathToNuspecFromRoot
-    let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@\"%s\"" tools.GitUserName tools.GitPassword tools.GitRepo
+//    let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@\"%s\"" tools.GitUserName tools.GitPassword tools.GitRepo
+    let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@\"%s\"" config.["git:user"] config.["git:password"] tools.GitRepo
 
     config.["bin:path"] <- tools.PathToDll
     config.["build:solution"] <- tools.PathToSolution
