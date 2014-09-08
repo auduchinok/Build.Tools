@@ -126,6 +126,8 @@ let pushApiKey = @"f6ba9139-9d42-4cf1-acaf-344f963ff807"
 let commitMessage = @"Change version of package in AssemblyInfo and Nuspec files"
 
 let commonConfig (tools : SpecificConfig) =
+    printf "\n\nuser = %A\n\npassword = %A\n\n" config.["git:user"] config.["git:password"]
+
     let gitCommandToCommit = sprintf "commit -m \"%s\" \"%s\" \"%s\"" commitMessage tools.PathToAssembleyInfoFromRoot tools.PathToNuspecFromRoot
 //    let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@\"%s\"" tools.GitUserName tools.GitPassword tools.GitRepo
     let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@\"%s\"" config.["git:user"] config.["git:password"] tools.GitRepo
@@ -152,7 +154,6 @@ let commonConfig (tools : SpecificConfig) =
         gitCommand tools.PathToRepository gitCommandToCommit
     )
     Target "Git:Push" (fun _ ->
-        printf "\n\nuser = %A\n\npassword = %A\n\n" config.["git:user"] config.["git:password"]
         gitCommand tools.PathToRepository gitCommandToPush
     )
 
