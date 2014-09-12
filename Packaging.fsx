@@ -1,11 +1,9 @@
 #r @"./fake/fakelib.dll"
 #r "System.Xml.Linq.dll"
-//#r "System.IO.Compression.dll"
 #load "./Utils.fsx"
 
 open System
 open System.IO
-//open System.IO.Compression
 open System.Text.RegularExpressions
 open System.Xml.Linq
 open Fake
