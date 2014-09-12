@@ -17,7 +17,6 @@ type Map<'Key,'Value when 'Key : comparison> with
 
 let ensureNunitRunner (config : Map<string, string>) =
   let dir = config.get "core:tools" @@ nunitRunners
-  printf "\n\nDIR  =  %s\n\n" dir  
   if not (directoryExists <| config.get "core:tools" @@ nunitRunners) then
      let args =
          sprintf "Install NUnit.Runners -ExcludeVersion -OutputDirectory \"%s\""
