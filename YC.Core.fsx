@@ -1,5 +1,6 @@
 #r @"Fake/FakeLib.dll"
 #load "Core.fsx"
+#load "Utils.fsx"
 
 open Fake
 open Fake.Git
@@ -15,6 +16,8 @@ let gitRepo = "code.google.com/p/recursive-ascent/"
 
 let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, gitRepo)
 commonConfig specConfig
+
+do Utils.ensureNunitRunner <| Utils.mapOfDict config
 
 "Packaging:Restore"
     ==> "Solution:Clean"
