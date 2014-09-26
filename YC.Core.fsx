@@ -20,7 +20,7 @@ commonConfig specConfig
 "Packaging:Restore"
     ==> "Solution:Clean"
     ==> "Solution:Build"
-    ==> "Test:Run"
+//    ==> "Test:Run"
     ==> "Versioning:Update"
     ==> "Packaging:Package"
     =?> ("Packaging:Push", not isLocalBuild)
