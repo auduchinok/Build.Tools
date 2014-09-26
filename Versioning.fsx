@@ -37,7 +37,7 @@ let private constructInfoVersion (config: Map<string, string>) (fileVersion: Ver
                     | "master" -> 
                         "." + (fileVersion.Revision + 1).ToString()
                     | _ -> 
-                        "." + (fileVersion.Revision + 1).ToString() + (config.get "versioning:branch" |> escapeBranchName) + "-ci"
+                        "." + (fileVersion.Revision + 1).ToString() + "-" + (config.get "versioning:branch" |> escapeBranchName) + "-ci"
 
     infoVersion.ToString() + suffix
 
