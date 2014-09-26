@@ -31,13 +31,13 @@ let private constructInfoVersion (config: Map<string, string>) (fileVersion: Ver
     let suffix =
         match isLocalBuild with
             | true -> 
-                "-" + ((getBranchName (DirectoryName file)) |> escapeBranchName) + "-" + (fileVersion.Revision + 1).ToString() + "-local"
+                "." + (fileVersion.Revision + 1).ToString() + "-" + ((getBranchName (DirectoryName file)) |> escapeBranchName) + "-local"
             | _ ->
                 match config.get "versioning:branch" with
                     | "master" -> 
                         "." + (fileVersion.Revision + 1).ToString()
                     | _ -> 
-                        "-" + (config.get "versioning:branch" |> escapeBranchName) + "-" + (fileVersion.Revision + 1).ToString() + "-ci"
+                        "." + (fileVersion.Revision + 1).ToString() + (config.get "versioning:branch" |> escapeBranchName) + "-ci"
 
     infoVersion.ToString() + suffix
 
@@ -67,9 +67,8 @@ let private updateAssemblyInfo config file =
                  AssemblyInformationalVersion = snd versions
         })
 
-let private renameDll (config : Map<string,string>) file finalVersion=
-    let pathToDll = config.get "bin:path"
-    let allFiles = Directory.GetFiles(pathToDll)
+let private renameDll (config : Map<string,string>) file finalVersion =
+    let allFiles = Directory.GetFiles(config.get "bin:path")
 
     for fileName in allFiles do
         let test = "Test"
@@ -112,11 +111,7 @@ let private updateDeployNuspec config (file:string) =
     let semVerSplitByDot = versionNode.InnerText.Split('.')
     let suffix = semVerSplitByDot.[semVerSplitByDot.Length - 1]
     let suffixSplitByHyphen = suffix.Split('-')
-    let mutable buildNumber = 0
-    if suffixSplitByHyphen.Length > 1 then 
-        buildNumber <- (suffixSplitByHyphen.[2] |> int)
-    else 
-        buildNumber <- (suffixSplitByHyphen.[0] |> int)
+    let buildNumber = suffixSplitByHyphen.[0] |> int
 
     let fileVersion = new Version(semVer.Major, semVer.Minor, semVer.Patch, buildNumber)
     let finalVersion = constructInfoVersion config fileVersion file

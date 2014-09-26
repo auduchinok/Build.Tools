@@ -127,7 +127,6 @@ let commitMessage = @"Change version of package in AssemblyInfo and Nuspec files
 
 let commonConfig (tools : SpecificConfig) =
     let gitCommandToCommit = sprintf "commit -m \"%s\" \"%s\" \"%s\"" commitMessage tools.PathToAssembleyInfoFromRoot tools.PathToNuspecFromRoot
-//    let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@\"%s\"" tools.GitUserName tools.GitPassword tools.GitRepo
     let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@\"%s\"" config.["git:user"] config.["git:password"] tools.GitRepo
 
     config.["bin:path"] <- tools.PathToDll
@@ -145,8 +144,8 @@ let commonConfig (tools : SpecificConfig) =
     config.["test:path"] <- tools.PathToTests
 
     Target "Versioning:Update" (fun x ->
-        Versioning.update (mapOfDict config) x
         Versioning.updateDeploy (mapOfDict config) x
+        Versioning.update (mapOfDict config) x
     )
     Target "Git:Commit" (fun _ ->
         gitCommand tools.PathToRepository gitCommandToCommit

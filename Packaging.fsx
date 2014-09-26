@@ -147,8 +147,8 @@ let restore (config : Map<string, string>) _ =
     !! (sprintf @"%s" (config.get "repo:path" + "\**\packages.config"))
         |> Seq.iter (restorePackages config)
 
-let update config _ =
-    !! "./**/packages.config"
+let update (config : Map<string, string>) _ =
+    !! (sprintf @"%s" (config.get "repo:path" + "\**\packages.config"))
         |> Seq.iter (updatePackages config)
 
 let cleanDirOnceHistory = new System.Collections.Generic.List<string>()
