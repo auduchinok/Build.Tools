@@ -11,7 +11,9 @@ let pathToYardFrontendGen = @"..\src\YardFrontend\gen.cmd"
 let pathToWorkingDirForYardFrontendGen = @"..\src\YardFrontend"
 let argsForYardFrontendGen = @""
 
-let pathToMinimalSolution = @"..\src\YC.SEL.SDK.Minimal.sln"
+let pathToMinimalSolution = @"..\src\YC.Minimal.sln"
+
+let pathToYardFrontendSolution = @"..\src\YC.YardFrontend.sln"
 
 let pathToRNGLRAbstractParserTestGenLex = @"..\src\RNGLRAbstractParser.Test\gen_lex.cmd"
 let pathToWorkingDirForRNGLRAbstractParserTestGenLex = @"..\src\RNGLRAbstractParser.Test"
@@ -59,7 +61,13 @@ Target "HighLighting:Run" (fun _ ->
     runCmd pathToTSQLHighLightingGen pathToWorkingDirForTSQLHighLightingGen argsForTSQLHighLightingGen   
 )
 
+Target "Solution:BuildYardFrontend" <| Solution.buildSpec (mapOfDict config) pathToYardFrontendSolution
+Target "Solution:CleanYardFrontend" <| Solution.cleanSpec (mapOfDict config) pathToYardFrontendSolution
+
+
 Target "Start" <| DoNothing
+
+
 
 
 let pathToSolution = @"..\src\YC.SDK.sln"
@@ -73,15 +81,17 @@ let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFr
 commonConfig specConfig
 
 "Packaging:Restore"
-    ==> "YardFrontend:Gen"
     ==> "Mono.Addins:Xml"
     ==> "Solution:CleanMinimal"
     ==> "Solution:BuildMinimal"
+    ==> "YardFrontend:Gen"
+    ==> "Solution:CleanYardFrontend"
+    ==> "Solution:BuildYardFrontend"
     ==> "RNGLR:Test"
     ==> "HighLighting:Run"
     ==> "Solution:Clean"
     ==> "Solution:Build"
-    //==> "Test:Run"
+    ==> "Test:Run"
     //==> "Versioning:Update"
     //==> "Packaging:Package"
     //=?> ("Packaging:Push", not isLocalBuild)
