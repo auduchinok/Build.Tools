@@ -62,7 +62,7 @@ Target "HighLighting:Run" (fun _ ->
 Target "Start" <| DoNothing
 
 
-let pathToSolution = @"..\src\YC.SEL.SDK.sln"
+let pathToSolution = @"..\src\YC.SDK.sln"
 let pathToNuspec = @"..\src\FsYacc\YC.Tools.nuspec"
 let pathToNuspecFromRoot = @"src\FsYacc\YC.Tools.nuspec"
 let pathToAssembleyInfo = @"..\src\FsYacc\AssemblyInfo.fs"
