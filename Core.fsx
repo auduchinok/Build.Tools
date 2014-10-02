@@ -164,18 +164,3 @@ let commonConfig (tools : SpecificConfig) =
     Target "Test:Run"           <| Test.run (mapOfDict config)
     Target "Mono.Addins:Xml"    <| Utils.correctPathToAddins (mapOfDict config)
     //Target "SpecFlow:Run"      <| Specflow.run (mapOfDict config)
-
-
-
-// Build order
-//"Packaging:Restore"
-//    ==> "Solution:Clean"
-//    ==> "Versioning:Update"
-//    ==> "Solution:Build"
-//    ==> "Packaging:Package"
-//    ==> "SpecFlow:Run"
-//    ==> "Test:Run"
-//    =?> ("Packaging:Push", not isLocalBuild)
-//    ==> "Default"
-
-//RunParameterTargetOrDefault "target" "Default"
