@@ -93,13 +93,15 @@ let private updatePackages (config: Map<string, string>) file =
         isNullOrEmpty specificId ||
         (isNotNullOrEmpty specificId && File.ReadAllText(file).Contains(specificId)) then
             let args =
-                sprintf "update \"%s\"%s"
+                sprintf "update \"%s\"%s %s %s"
                     file
                     (if isNotNullOrEmpty specificId then sprintf " -Id \"%s\"" specificId else "")
+                    (nugetConfigOption config)
+                    "-Prerelease"
             let result =
                 ExecProcess (fun info ->
                     info.FileName <- config.get "core:tools" @@ nuget
-                    info.WorkingDirectory <- DirectoryName file
+                    info.WorkingDirectory <- Path.GetFullPath(".")
                     info.Arguments <- args) (TimeSpan.FromMinutes 5.)
 
             if result <> 0 then failwithf "Error updating NuGet package %s" specificId
@@ -147,8 +149,12 @@ let restore (config : Map<string, string>) _ =
     !! (sprintf @"%s" (config.get "repo:path" + "\**\packages.config"))
         |> Seq.iter (restorePackages config)
 
+//let update (config : Map<string, string>) _ =
+//    !! (sprintf @"%s" (config.get "repo:path" + "\src\**\packages.config"))
+//        |> Seq.iter (updatePackages config)
+
 let update (config : Map<string, string>) _ =
-    !! (sprintf @"%s" (config.get "repo:path" + "\**\packages.config"))
+    !! (sprintf @"%s" (config.get "repo:path" + "\src\*.sln"))
         |> Seq.iter (updatePackages config)
 
 let cleanDirOnceHistory = new System.Collections.Generic.List<string>()
