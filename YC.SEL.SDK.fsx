@@ -81,17 +81,17 @@ let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFr
 commonConfig specConfig
 
 "Packaging:Restore"
-    ==> "Mono.Addins:Xml"
     ==> "Solution:CleanMinimal"
+    ==> "Solution:CleanYardFrontend"
+    ==> "Solution:Clean"
     ==> "Solution:BuildMinimal"
     ==> "YardFrontend:Gen"
-    ==> "Solution:CleanYardFrontend"
     ==> "Solution:BuildYardFrontend"
     ==> "RNGLR:Test"
     ==> "HighLighting:Run"
-    ==> "Solution:Clean"
     ==> "Solution:Build"
     ==> "Test:Run"
+    ==> "Mono.Addins:Xml"
     //==> "Versioning:Update"
     //==> "Packaging:Package"
     //=?> ("Packaging:Push", not isLocalBuild)
