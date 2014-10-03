@@ -31,6 +31,10 @@ let pathToRNGLRParserSimpleTestGen = @"..\src\RNGLRParser.SimpleTest\gen.cmd"
 let pathToWorkingDirForRNGLRParserSimpleTestGen = @"..\src\RNGLRParser.SimpleTest"
 let argsForRNGLRParserSimpleTestGen = @""
 
+let pathToOtherSPPFTestGen = @"..\src\RNGLR.OtherSppfTest\gen.cmd"
+let pathToWorkingDirForOtherSPPFTestGen = @"..\src\RNGLR.OtherSppfTest"
+let argsForOtherSPPFTestGen = @""
+
 let pathToCalcHighLightingGen = @"..\src\Calc\gen_highlighting.cmd"
 let pathToWorkingDirForCalcHighLightingGen = @"..\src\Calc"
 let argsForCalcHighLightingGen = @""
@@ -54,6 +58,7 @@ Target "RNGLR:Test" (fun _ ->
     runCmd pathToRNGLRAbstractParserTestGen pathToWorkingDirForRNGLRAbstractParserTestGen argsForRNGLRAbstractParserTestGen
     runCmd pathToRNGLRParserErrorRecoveryTestGen pathToWorkingDirForRNGLRParserErrorRecoveryTestGen argsForRNGLRParserErrorRecoveryTestGen
     runCmd pathToRNGLRParserSimpleTestGen pathToWorkingDirForRNGLRParserSimpleTestGen argsForRNGLRParserSimpleTestGen
+    runCmd pathToOtherSPPFTestGen pathToWorkingDirForOtherSPPFTestGen argsForOtherSPPFTestGen
 )
 Target "HighLighting:Run" (fun _ ->
     runCmd pathToCalcHighLightingGen pathToWorkingDirForCalcHighLightingGen argsForCalcHighLightingGen
