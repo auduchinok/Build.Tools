@@ -31,6 +31,10 @@ let pathToRNGLRParserSimpleTestGen = @"..\src\RNGLRParser.SimpleTest\gen.cmd"
 let pathToWorkingDirForRNGLRParserSimpleTestGen = @"..\src\RNGLRParser.SimpleTest"
 let argsForRNGLRParserSimpleTestGen = @""
 
+let pathToGLLParserSimpleTestGen = @"..\src\GLLParser.SimpleTest\gen.cmd "
+let pathToWorkingDirForGLLParserSimpleTestGen = @"..\src\GLLParser.SimpleTest"
+let argsForGLLParserSimpleTestGen = @""
+
 let pathToOtherSPPFTestGen = @"..\src\RNGLR.OtherSppfTest\gen.cmd"
 let pathToWorkingDirForOtherSPPFTestGen = @"..\src\RNGLR.OtherSppfTest"
 let argsForOtherSPPFTestGen = @""
@@ -53,14 +57,19 @@ Target "YardFrontend:Gen" (fun _ ->
 )
 Target "Solution:BuildMinimal" <| Solution.buildSpec (mapOfDict config) pathToMinimalSolution
 Target "Solution:CleanMinimal" <| Solution.cleanSpec (mapOfDict config) pathToMinimalSolution
-Target "RNGLR:Test" (fun _ ->
+Target "RNGLR:GenTest" (fun _ ->
     //runCmd pathToRNGLRAbstractParserTestGenLex pathToWorkingDirForRNGLRAbstractParserTestGenLex argsForRNGLRAbstractParserTestGenLex
     runCmd pathToRNGLRAbstractParserTestGen pathToWorkingDirForRNGLRAbstractParserTestGen argsForRNGLRAbstractParserTestGen
     runCmd pathToRNGLRParserErrorRecoveryTestGen pathToWorkingDirForRNGLRParserErrorRecoveryTestGen argsForRNGLRParserErrorRecoveryTestGen
     runCmd pathToRNGLRParserSimpleTestGen pathToWorkingDirForRNGLRParserSimpleTestGen argsForRNGLRParserSimpleTestGen
     runCmd pathToOtherSPPFTestGen pathToWorkingDirForOtherSPPFTestGen argsForOtherSPPFTestGen
 )
-Target "HighLighting:Run" (fun _ ->
+
+Target "GLL:GenTest" (fun _ ->
+    runCmd pathToGLLParserSimpleTestGen pathToWorkingDirForGLLParserSimpleTestGen argsForGLLParserSimpleTestGen
+)
+
+Target "HighLighting:GenTest" (fun _ ->
     runCmd pathToCalcHighLightingGen pathToWorkingDirForCalcHighLightingGen argsForCalcHighLightingGen
     runCmd pathToJSONHighLightingGen pathToWorkingDirForJSONHighLightingGen argsForJSONHighLightingGen
     runCmd pathToTSQLHighLightingGen pathToWorkingDirForTSQLHighLightingGen argsForTSQLHighLightingGen   
@@ -91,8 +100,9 @@ commonConfig specConfig
     ==> "Solution:BuildMinimal"
     ==> "YardFrontend:Gen"
     ==> "Solution:BuildYardFrontend"
-    ==> "RNGLR:Test"
-    ==> "HighLighting:Run"
+    ==> "RNGLR:GenTest"
+    ==> "GLL:GenTest"
+    ==> "HighLighting:GenTest"
     ==> "Solution:Clean"
     ==> "Solution:Build"
     ==> "Test:Run"
