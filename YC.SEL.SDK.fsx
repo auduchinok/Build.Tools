@@ -81,9 +81,6 @@ Target "Solution:CleanYardFrontend" <| Solution.cleanSpec (mapOfDict config) pat
 
 Target "Start" <| DoNothing
 
-
-
-
 let pathToSolution = @"..\src\YC.SDK.sln"
 let pathToNuspec = @"..\src\FsYacc\YC.Tools.nuspec"
 let pathToNuspecFromRoot = @"src\FsYacc\YC.Tools.nuspec"
