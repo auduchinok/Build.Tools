@@ -51,6 +51,24 @@ let pathToTSQLHighLightingGen = @"..\src\TSQL\gen_highlighting.cmd"
 let pathToWorkingDirForTSQLHighLightingGen = @"..\src\TSQL"
 let argsForTSQLHighLightingGen = @""
 
+let packagesConfigDirForSubmodule = @"..\FST"  
+let outputPackageDirForSubmodule = @"..\FST\FST\packages"
+
+
+
+let pathToSolution = @"..\src\YC.SDK.sln"
+let pathToNuspec = @"..\src\FsYacc\YC.Tools.nuspec"
+let pathToNuspecFromRoot = @"src\FsYacc\YC.Tools.nuspec"
+let pathToAssembleyInfo = @"..\src\FsYacc\AssemblyInfo.fs"
+let pathToAssembleyInfoFromRoot = @"src\FsYacc\AssemblyInfo.fs"
+let gitRepo = "code.google.com/p/recursive-ascent/"
+
+let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, gitRepo)
+commonConfig specConfig
+
+
+
+Target "Packaging:RestoreForSubmodule" <| Packaging.restoreSpecOutput (mapOfDict config) packagesConfigDirForSubmodule outputPackageDirForSubmodule
 
 Target "YardFrontend:Gen" (fun _ ->
     runCmd pathToYardFrontendGen pathToWorkingDirForYardFrontendGen argsForYardFrontendGen
@@ -78,37 +96,28 @@ Target "HighLighting:GenTest" (fun _ ->
 Target "Solution:BuildYardFrontend" <| Solution.buildSpec (mapOfDict config) pathToYardFrontendSolution
 Target "Solution:CleanYardFrontend" <| Solution.cleanSpec (mapOfDict config) pathToYardFrontendSolution
 
-
 Target "Start" <| DoNothing
 
-let pathToSolution = @"..\src\YC.SDK.sln"
-let pathToNuspec = @"..\src\FsYacc\YC.Tools.nuspec"
-let pathToNuspecFromRoot = @"src\FsYacc\YC.Tools.nuspec"
-let pathToAssembleyInfo = @"..\src\FsYacc\AssemblyInfo.fs"
-let pathToAssembleyInfoFromRoot = @"src\FsYacc\AssemblyInfo.fs"
-let gitRepo = "code.google.com/p/recursive-ascent/"
 
-let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, gitRepo)
-commonConfig specConfig
-
-"Packaging:Restore"
+"Packaging:RestoreForSubmodule"
+    ==> "Packaging:Restore"
     ==> "Solution:CleanMinimal"
     ==> "Solution:CleanYardFrontend"
     ==> "Solution:BuildMinimal"
     ==> "YardFrontend:Gen"
     ==> "Solution:BuildYardFrontend"
     ==> "RNGLR:GenTest"
-    ==> "GLL:GenTest"
+//    ==> "GLL:GenTest"
     ==> "HighLighting:GenTest"
     ==> "Solution:Clean"
     ==> "Solution:Build"
     ==> "Test:Run"
     ==> "Mono.Addins:Xml"
-    //==> "Versioning:Update"
-    //==> "Packaging:Package"
-    //=?> ("Packaging:Push", not isLocalBuild)
-    //=?> ("Git:Commit", not isLocalBuild)
-    //=?> ("Git:Push", not isLocalBuild)
+    ==> "Versioning:Update"
+    ==> "Packaging:Package"
+    =?> ("Packaging:Push", not isLocalBuild)
+    =?> ("Git:Commit", not isLocalBuild)
+    =?> ("Git:Push", not isLocalBuild)
     ==> "Default"
 
 RunParameterTargetOrDefault "target" "Default"
