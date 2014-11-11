@@ -68,7 +68,13 @@ let private installPackageOptions (config: Map<string, string>) =
     if isNullOrEmpty packagePath then
         ""
     else
-       sprintf @"-OutputDirectory ""%s""" packagePath 
+       sprintf @"-OutputDirectory ""%s""" packagePath
+
+let private installPackageOptionsSpecOutput outputDir =
+    if isNullOrEmpty outputDir then
+        ""
+    else
+       sprintf @"-OutputDirectory ""%s""" outputDir
 
 let private nugetConfigOption (config: Map<string, string>) =
     let nugetConfigPath = (config.get "packaging:nugetconfig")
@@ -76,6 +82,7 @@ let private nugetConfigOption (config: Map<string, string>) =
         ""
     else
        sprintf @"-ConfigFile ""%s""" nugetConfigPath 
+
 
 let private restorePackages (config: Map<string, string>) file =
     let timeOut = TimeSpan.FromMinutes 5.
@@ -86,6 +93,18 @@ let private restorePackages (config: Map<string, string>) file =
                         info.WorkingDirectory <- Path.GetFullPath(".")
                         info.Arguments <- args) timeOut
     if result <> 0 then failwithf "Error during Nuget update. %s %s" (config.get "core:tools" @@ nuget) args
+
+
+let private restorePackagesSpecOutput (config: Map<string, string>) outputDir file =
+    let timeOut = TimeSpan.FromMinutes 5.
+    let args = sprintf @"install ""%s"" %s %s" file (installPackageOptionsSpecOutput outputDir) (nugetConfigOption config)
+
+    let result = ExecProcess (fun info ->
+                        info.FileName <- config.get "core:tools" @@ nuget
+                        info.WorkingDirectory <- Path.GetFullPath(".")
+                        info.Arguments <- args) timeOut
+    if result <> 0 then failwithf "Error during Nuget update. %s %s" (config.get "core:tools" @@ nuget) args
+
 
 let private updatePackages (config: Map<string, string>) file =
     let specificId = config.get "packaging:updateid"
@@ -148,6 +167,10 @@ let pushPackages (config: Map<string, string>) pushto pushdir pushurl apikey nup
 let restore (config : Map<string, string>) _ =
     !! (sprintf @"%s" (config.get "repo:path" + "\**\packages.config"))
         |> Seq.iter (restorePackages config)
+
+let restoreSpecOutput (config : Map<string, string>) packagesConfigDir outputDir _ = 
+    !! (sprintf @"%s" (packagesConfigDir + "\**\packages.config"))
+        |> Seq.iter (restorePackagesSpecOutput config outputDir)
 
 //let update (config : Map<string, string>) _ =
 //    !! (sprintf @"%s" (config.get "repo:path" + "\src\**\packages.config"))
