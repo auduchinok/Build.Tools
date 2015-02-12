@@ -61,7 +61,7 @@ let pathToNuspec = @"..\src\FsYacc\YC.Tools.nuspec"
 let pathToNuspecFromRoot = @"src\FsYacc\YC.Tools.nuspec"
 let pathToAssembleyInfo = @"..\src\FsYacc\AssemblyInfo.fs"
 let pathToAssembleyInfoFromRoot = @"src\FsYacc\AssemblyInfo.fs"
-let gitRepo = "code.google.com/p/recursive-ascent/"
+let gitRepo = "github.com/YaccConstructor/YaccConstructor.git"
 
 let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, gitRepo)
 commonConfig specConfig
