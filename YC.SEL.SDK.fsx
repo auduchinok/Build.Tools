@@ -107,7 +107,7 @@ Target "Start" <| DoNothing
     ==> "YardFrontend:Gen"
     ==> "Solution:BuildYardFrontend"
     ==> "RNGLR:GenTest"
-//    ==> "GLL:GenTest"
+    ==> "GLL:GenTest"
     ==> "HighLighting:GenTest"
     ==> "Solution:Clean"
     ==> "Solution:Build"
