@@ -22,8 +22,9 @@ let config =
         "core:tools",                   environVar          "tools"
         "monoaddins:pathtonodes",       environVarOrDefault "addins"                ""
         "monoaddins:pathtoconfigxml",   environVarOrDefault "addinsxml"             ""
-        //"git:user",                     environVarOrDefault "user"                  ""
-        //"git:password",                 environVarOrDefault "password"              ""
+        "git:user",                     environVar "user_name"
+        "git:password",                 environVar "user_password"
+        "git:reftorepo",                environVar "ref_to_repo"
         "packaging:output",             environVarOrDefault "output"                (sprintf "%s\output" (Path.GetFullPath(".")))
         "packaging:deployoutput",       environVarOrDefault "deployoutput"          (sprintf "%s\packages" (Path.GetFullPath(".")))
         "packaging:outputsubdirs",      environVarOrDefault "outputsubdirs"         "false"
@@ -47,12 +48,6 @@ let config =
                                             | "<default>" -> environVar "vcsroot_branch"
                                             | _ -> environVar "teamcity_build_branch"
         "vs:version",                   environVarOrDefault "vs_version"            "11.0"
-
-
-        "git:user",                     environVar "user_name"
-        "git:password",                 environVar "user_password"
-        "git:reftorepo",                environVar "ref_to_repo"
-
     ]
     |> List.iter (fun (k,v) -> dict.Add(k,v))
     dict
@@ -73,7 +68,6 @@ type SpecificConfig =
         val PathToNugetConfig: string
         val PathToAddinsNodesFromConfigXML: string
         val PathToAddinsConfigXML: string
-        //val GitRepo: string
 
         new(sol: string, nusp: string, nusproot: string, assem: string, assemroot: string, //gitrepo: string, 
             ?repo: string, ?dll: string, ?test: string, ?tool: string, ?pack: string, ?nugetconf: string, ?addins: string, ?addinsxml: string) = {           
@@ -82,7 +76,6 @@ type SpecificConfig =
             PathToNuspecFromRoot = nusproot
             PathToAssembleyInfo = assem
             PathToAssembleyInfoFromRoot = assemroot           
-            //GitRepo = gitrepo
 
             PathToRepository =
                 match repo with
@@ -133,7 +126,7 @@ let commitMessage = @"Change version of package in AssemblyInfo and Nuspec files
 
 let commonConfig (tools : SpecificConfig) =
     let gitCommandToCommit = sprintf "commit -m \"%s\" \"%s\" \"%s\"" commitMessage tools.PathToAssembleyInfoFromRoot tools.PathToNuspecFromRoot
-    let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@\"%s\"" config.["git:user"] config.["git:password"] config.["git:reftorepo"]//tools.GitRepo
+    let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@\"%s\"" config.["git:user"] config.["git:password"] config.["git:reftorepo"]
 
     config.["bin:path"] <- tools.PathToDll
     config.["build:solution"] <- tools.PathToSolution

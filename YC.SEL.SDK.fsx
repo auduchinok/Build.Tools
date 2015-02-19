@@ -61,9 +61,8 @@ let pathToNuspec = @"..\src\FsYacc\YC.Tools.nuspec"
 let pathToNuspecFromRoot = @"src\FsYacc\YC.Tools.nuspec"
 let pathToAssembleyInfo = @"..\src\FsYacc\AssemblyInfo.fs"
 let pathToAssembleyInfoFromRoot = @"src\FsYacc\AssemblyInfo.fs"
-//let gitRepo = "github.com/YaccConstructor/YaccConstructor.git"
 
-let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot)//, gitRepo)
+let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot)
 commonConfig specConfig
 
 
