@@ -22,9 +22,9 @@ let config =
         "core:tools",                   environVar          "tools"
         "monoaddins:pathtonodes",       environVarOrDefault "addins"                ""
         "monoaddins:pathtoconfigxml",   environVarOrDefault "addinsxml"             ""
-        "git:user",                     environVar "user_name"
-        "git:password",                 environVar "user_password"
-        "git:reftorepo",                environVar "ref_to_repo"
+        "git:user",                     environVar          "user_name"
+        "git:password",                 environVar          "user_password"
+        "git:reftorepo",                environVar          "ref_to_repo"
         "packaging:output",             environVarOrDefault "output"                (sprintf "%s\output" (Path.GetFullPath(".")))
         "packaging:deployoutput",       environVarOrDefault "deployoutput"          (sprintf "%s\packages" (Path.GetFullPath(".")))
         "packaging:outputsubdirs",      environVarOrDefault "outputsubdirs"         "false"
