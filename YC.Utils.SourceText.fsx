@@ -12,9 +12,8 @@ let pathToNuspecFromRoot = @"src\Utils.SourceText\Utils.SourceText.nuspec"
 let pathToAssembleyInfo = @"..\src\Utils.SourceText\AssemblyInfo.fs"
 let pathToAssembleyInfoFromRoot = @"src\Utils.SourceText\AssemblyInfo.fs"
 let pathToNugetConfig = ""
-let gitRepo = "github.com/YaccConstructor/YC.Utils.SourceText.git"
 
-let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, gitRepo, nugetconf = pathToNugetConfig)
+let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, nugetconf = pathToNugetConfig)
 commonConfig specConfig
 
 "Packaging:Restore"

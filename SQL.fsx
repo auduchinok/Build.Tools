@@ -27,9 +27,8 @@ let pathToNuspecFromRoot = @""
 let pathToAssembleyInfo = @""
 let pathToAssembleyInfoFromRoot = @""
 
-let gitRepo = "github.com/YaccConstructor/YC.Abstract.SQL.git"
 
-let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, gitRepo)
+let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot)
 commonConfig specConfig
 
 Target "Parsers:Gen" (fun _ ->
