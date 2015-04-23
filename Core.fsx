@@ -149,7 +149,7 @@ let commonConfig (tools : SpecificConfig) =
         Versioning.update (mapOfDict config) x
     )
 
-    Target "Versioning:IncrementCommonVersion" (fun x -> Versioning.writeCommonVersion (mapOfDict config))
+    Target "Versioning:IncrementCommonVersion" (fun x -> Packaging.writeCommonVersion (mapOfDict config))
 
     Target "Git:Commit" (fun _ ->
         gitCommand tools.PathToRepository gitCommandToCommit
