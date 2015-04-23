@@ -220,8 +220,9 @@ let packageDeploy (config : Map<string, string>) _ =
     !! (sprintf @"%s" (config.get "packaging:nuspecpath"))
         |> Seq.iter (packageDeployment config (config.get "packaging:deployoutput") None)
 
-    Directory.GetFiles ((config.get "packaging:nuspecdir"), "*.nuspec")
-        |> Array.iter (packageDeployment config (config.get "packaging:deployoutput") (Some version))
+    if Directory.Exists (config.get "packaging:nuspecdir")
+    then Directory.GetFiles ((config.get "packaging:nuspecdir"), "*.nuspec")
+            |> Array.iter (packageDeployment config (config.get "packaging:deployoutput") (Some version))
 
 let push (config : Map<string, string>) _ =
     let pushto = config.TryFind "packaging:pushto"
