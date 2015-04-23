@@ -142,12 +142,3 @@ let update (config : Map<string, string>) _ =
 let updateDeploy (config : Map<string, string>) _ =
     !! (sprintf @"%s" (config.get "packaging:nuspecpath"))
         |> Seq.iter (updateDeployNuspec config)
-
-let readCommonVersion (config : Map<string, string>) =
-    (config.get "versioning:path" |> File.ReadAllLines).[0]
-
-let writeCommonVersion (config : Map<string, string>) =
-    let ver = readCommonVersion config
-    let lastDigit = ver.Substring (ver.LastIndexOf '.' + 1) |> Int32.Parse
-    let vers = ver.Substring (0, ver.LastIndexOf '.' + 1) + (lastDigit + 1).ToString()
-    File.WriteAllText (config.get "versioning:path", vers)
