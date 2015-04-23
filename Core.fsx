@@ -41,8 +41,10 @@ let config =
         "packaging:assemblyinfopath",   environVarOrDefault "assemblyinfo"          ""
         "packaging:nuspecpath",         environVarOrDefault "nuspec"                ""
         "packaging:nugetconfig",        environVarOrDefault "nugetconfig"           ""
+        "packaging:nuspecdir",          environVarOrDefault "nuspecdir"             (sprintf "%s\..\Nuspec" (Path.GetFullPath(".")))
         "repo:path",                    environVarOrDefault "repo"                  ""    
         "test:path",                    environVarOrDefault "tests"                 ""
+        "versioning:path",              environVarOrDefault "version_path"          (sprintf "%s\..\VERSION" (Path.GetFullPath(".")))
         "versioning:build",             environVarOrDefault "build_number"          "0"
         "versioning:branch",            match environVar "teamcity_build_branch" with
                                             | "<default>" -> environVar "vcsroot_branch"
@@ -146,6 +148,9 @@ let commonConfig (tools : SpecificConfig) =
         Versioning.updateDeploy (mapOfDict config) x
         Versioning.update (mapOfDict config) x
     )
+
+    Target "Versioning:IncrementCommonVersion" (fun x -> Versioning.writeCommonVersion (mapOfDict config))
+
     Target "Git:Commit" (fun _ ->
         gitCommand tools.PathToRepository gitCommandToCommit
     )

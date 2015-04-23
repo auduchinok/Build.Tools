@@ -1,6 +1,7 @@
 #r @"./fake/fakelib.dll"
 #r "System.Xml.Linq.dll"
 #load "./Utils.fsx"
+#load "./Versioning.fsx"
 
 open System
 open System.IO
@@ -41,19 +42,25 @@ let private packageProject (config: Map<string, string>) outputDir proj =
     
     if result <> 0 then failwithf "Error packaging NuGet package. Project file: %s" proj
 
-let private packageDeployment (config: Map<string, string>) outputDir proj =
+let private packageDeployment (config: Map<string, string>) outputDir version proj =
     let outputDirFull = match config.TryFind "packaging:outputsubdirs" with
                         | Some "true" -> outputDir + "\\" + Path.GetFileNameWithoutExtension(proj)
                         | _ -> outputDir
 
     Directory.CreateDirectory(outputDirFull) |> ignore
 
+    let versionParam =
+        match version with
+        | Some v -> "-version " + v
+        | None -> ""
+
     let args =
-        sprintf "pack \"%s\" -OutputDirectory \"%s\" -Properties Configuration=%s;VisualStudioVersion=%s -NoPackageAnalysis" 
+        sprintf "pack \"%s\" -OutputDirectory \"%s\" -Properties Configuration=%s;VisualStudioVersion=%s -NoPackageAnalysis %s" 
             proj
             outputDirFull
             (config.get "build:configuration")
             (config.get "vs:version")
+            versionParam
 
     let result =
         ExecProcess (fun info ->
@@ -193,11 +200,28 @@ let package (config : Map<string, string>) _ =
         |> Seq.choose filterPackageable
         |> Seq.iter (packageProject config (config.get "packaging:output"))
 
+let incrementVersion (version : string) =
+    let lastDigit = version.Substring (version.LastIndexOf '.' + 1) |> Int32.Parse
+    version.Substring (0, version.LastIndexOf '.' + 1) + (lastDigit + 1).ToString()
+
+let readCommonVersion (config : Map<string, string>) =
+    (config.get "versioning:path" |> File.ReadAllLines).[0]
+
+let writeCommonVersion (config : Map<string, string>) =
+    File.WriteAllText (config.get "versioning:path", config |> readCommonVersion |> incrementVersion)
+
 let packageDeploy (config : Map<string, string>) _ =
     CleanDirOnce (config.get "packaging:deployoutput")
 
+    let version = config |> readCommonVersion |> incrementVersion
+
+    File.WriteAllText ("log.txt", config.get "packaging:nuspecpath")
+
     !! (sprintf @"%s" (config.get "packaging:nuspecpath"))
-        |> Seq.iter (packageDeployment config (config.get "packaging:deployoutput"))
+        |> Seq.iter (packageDeployment config (config.get "packaging:deployoutput") None)
+
+    Directory.GetFiles ((config.get "packaging:nuspecdir"), "*.nuspec")
+        |> Array.iter (packageDeployment config (config.get "packaging:deployoutput") (Some version))
 
 let push (config : Map<string, string>) _ =
     let pushto = config.TryFind "packaging:pushto"
