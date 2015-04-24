@@ -115,8 +115,9 @@ Target "Start" <| DoNothing
     ==> "Versioning:Update"
     ==> "Packaging:Package"
     =?> ("Packaging:Push", not isLocalBuild)
+    =?> ("Versioning:IncrementCommonVersion", not isLocalBuild)
     =?> ("Git:Commit", not isLocalBuild)
     =?> ("Git:Push", not isLocalBuild)
     ==> "Default"
-
+    
 RunParameterTargetOrDefault "target" "Default"
