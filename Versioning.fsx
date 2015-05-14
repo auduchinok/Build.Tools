@@ -9,6 +9,23 @@ open Fake
 open Fake.Git
 open Utils
 
+let incrementVersion (version : Version) =
+//    let lastDigit = version.Substring (version.LastIndexOf '.' + 1) |> Int32.Parse
+//    version.Substring (0, version.LastIndexOf '.' + 1) + (lastDigit + 1).ToString()
+    Version (
+        version.Major,
+        version.Minor,
+        version.Build,
+        version.Revision + 1)
+
+let readCommonVersion (config : Map<string, string>) =
+    let verStr = (config.get "versioning:path" |> File.ReadAllLines).[0]
+    let digits = (verStr.Split('.')) |> Array.map (fun x -> Int32.Parse (x))
+    Version (digits.[0], digits.[1], digits.[2], digits.[3])
+    
+let updateCommonVersion (config : Map<string, string>) =
+    File.WriteAllText (config.get "versioning:path", (config |> readCommonVersion |> incrementVersion).ToString())
+
 let private readAssemblyVersion file =
     ReadFile file
         |> Seq.find (fun line -> not (line.StartsWith("//") || line.StartsWith("'")) && line.Contains "AssemblyVersion")
@@ -43,7 +60,7 @@ let private constructInfoVersion (config: Map<string, string>) (fileVersion: Ver
 
 
 let private constructVersions (config: Map<string, string>) file =
-    let fileVersion = readAssemblyVersion file
+    let fileVersion = readCommonVersion config //readAssemblyVersion file
 
     let assemblyVersion = 
         Version (
@@ -113,7 +130,7 @@ let private updateDeployNuspec config (file:string) =
     let suffixSplitByHyphen = suffix.Split('-')
     let buildNumber = suffixSplitByHyphen.[0] |> int
 
-    let fileVersion = new Version(semVer.Major, semVer.Minor, semVer.Patch, buildNumber)
+    let fileVersion = readCommonVersion config //new Version(semVer.Major, semVer.Minor, semVer.Patch, buildNumber)
     let finalVersion = constructInfoVersion config fileVersion file
 
     versionNode.InnerText <- finalVersion
@@ -138,7 +155,17 @@ let update (config : Map<string, string>) _ =
     //++ "./**/AssemblyInfo.vb"
         //|> Scan
         |> Seq.iter (updateAssemblyInfo config)
+    
+    Directory.GetFiles ((config.get "project:srcdir"), "AssemblyInfo.fs", SearchOption.AllDirectories)
+        |> Array.iter (updateAssemblyInfo config)
 
 let updateDeploy (config : Map<string, string>) _ =
     !! (sprintf @"%s" (config.get "packaging:nuspecpath"))
         |> Seq.iter (updateDeployNuspec config)
+    
+    if Directory.Exists (config.get "packaging:nuspecdir")
+    then Directory.GetFiles ((config.get "packaging:nuspecdir"), "*.nuspec")
+            |> Array.iter (updateDeployNuspec config)
+    
+let updateAllFiles (config : Map<string, string>) =
+    ()

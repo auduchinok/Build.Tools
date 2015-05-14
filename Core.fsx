@@ -16,6 +16,7 @@ open Utils
 let config = 
     let dict = new Dictionary<_,_>()
     [
+        "project:srcdir",                environVarOrDefault "projectsrcdir"            (sprintf "%s\..\src" (Path.GetFullPath(".")))
         "bin:path",                     environVarOrDefault "bin"                   ""
         "build:configuration",          environVarOrDefault "configuration"         "Release"
         "build:solution",               environVar          "solution"
@@ -70,15 +71,21 @@ type SpecificConfig =
         val PathToNugetConfig: string
         val PathToAddinsNodesFromConfigXML: string
         val PathToAddinsConfigXML: string
+        val PathToVersionFileFromRoot: string
 
         new(sol: string, nusp: string, nusproot: string, assem: string, assemroot: string, //gitrepo: string, 
-            ?repo: string, ?dll: string, ?test: string, ?tool: string, ?pack: string, ?nugetconf: string, ?addins: string, ?addinsxml: string) = {           
+            ?repo: string, ?dll: string, ?test: string, ?tool: string, ?pack: string, ?nugetconf: string, ?addins: string, ?addinsxml: string, ?versfile: string) = {           
             PathToSolution = sol
             PathToNuspec = nusp
             PathToNuspecFromRoot = nusproot
             PathToAssembleyInfo = assem
             PathToAssembleyInfoFromRoot = assemroot           
 
+            PathToVersionFileFromRoot =
+                match versfile with
+                | Some x -> x
+                | None -> @""
+            
             PathToRepository =
                 match repo with
                 | Some x -> x
@@ -127,7 +134,7 @@ let pushApiKey = @"f6ba9139-9d42-4cf1-acaf-344f963ff807"
 let commitMessage = @"Change version of package in AssemblyInfo and Nuspec files"
 
 let commonConfig (tools : SpecificConfig) =
-    let gitCommandToCommit = sprintf "commit -m \"%s\" \"%s\" \"%s\"" commitMessage tools.PathToAssembleyInfoFromRoot tools.PathToNuspecFromRoot
+    let gitCommandToCommit = sprintf "commit -m \"%s\" \"%s\" \"%s\" \"%s\"" commitMessage tools.PathToAssembleyInfoFromRoot tools.PathToNuspecFromRoot tools.PathToVersionFileFromRoot
     let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@\"%s\"" config.["git:user"] config.["git:password"] config.["git:reftorepo"]
 
     config.["bin:path"] <- tools.PathToDll
@@ -149,7 +156,7 @@ let commonConfig (tools : SpecificConfig) =
         Versioning.update (mapOfDict config) x
     )
 
-    Target "Versioning:IncrementCommonVersion" (fun x -> Packaging.writeCommonVersion (mapOfDict config))
+    Target "Versioning:IncrementCommonVersion" (fun x -> Versioning.updateCommonVersion (mapOfDict config))
 
     Target "Git:Commit" (fun _ ->
         gitCommand tools.PathToRepository gitCommandToCommit
@@ -157,7 +164,7 @@ let commonConfig (tools : SpecificConfig) =
     Target "Git:Push" (fun _ ->
         gitCommand tools.PathToRepository gitCommandToPush
     )
-
+    
     Target "Default"            <| DoNothing
     Target "Packaging:Package"  <| Packaging.packageDeploy (mapOfDict config)
     Target "Packaging:Restore"  <| Packaging.restore (mapOfDict config)
