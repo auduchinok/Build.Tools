@@ -151,9 +151,12 @@ let commonConfig (tools : SpecificConfig) =
     config.["repo:path"] <- tools.PathToRepository
     config.["test:path"] <- tools.PathToTests
 
-    Target "Versioning:Update" (fun x ->
-        Versioning.updateDeploy (mapOfDict config) x
+    Target "Versioning:UpdateAssemblyInfo" (fun x ->
         Versioning.update (mapOfDict config) x
+    )
+    
+    Target "Versioning:UpdateNuspecAndDll" (fun x ->
+        Versioning.updateDeploy (mapOfDict config) x
     )
 
     Target "Versioning:IncrementCommonVersion" (fun x -> Versioning.updateCommonVersion (mapOfDict config))
