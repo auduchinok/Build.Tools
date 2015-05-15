@@ -54,7 +54,7 @@ let argsForTSQLHighLightingGen = @""
 let packagesConfigDirForSubmodule = @"..\FST"  
 let outputPackageDirForSubmodule = @"..\FST\FST\packages"
 
-
+let pathToVersionFileFromRoot = @"VERSION"
 
 let pathToSolution = @"..\src\YC.SDK.sln"
 let pathToNuspec = @"..\src\FsYacc\YC.Tools.nuspec"
@@ -62,7 +62,7 @@ let pathToNuspecFromRoot = @"src\FsYacc\YC.Tools.nuspec"
 let pathToAssembleyInfo = @"..\src\FsYacc\AssemblyInfo.fs"
 let pathToAssembleyInfoFromRoot = @"src\FsYacc\AssemblyInfo.fs"
 
-let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot)
+let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, versfile  = pathToVersionFileFromRoot)
 commonConfig specConfig
 
 
@@ -100,6 +100,7 @@ Target "Start" <| DoNothing
 
 "Packaging:RestoreForSubmodule"
     ==> "Packaging:Restore"
+    ==> "Versioning:Update"
     ==> "Solution:CleanMinimal"
     ==> "Solution:CleanYardFrontend"
     ==> "Solution:BuildMinimal"
@@ -112,12 +113,11 @@ Target "Start" <| DoNothing
     ==> "Solution:Build"
     ==> "Test:Run"
     ==> "Mono.Addins:Xml"
-    ==> "Versioning:Update"
     ==> "Packaging:Package"
     =?> ("Packaging:Push", not isLocalBuild)
     =?> ("Versioning:IncrementCommonVersion", not isLocalBuild)
     =?> ("Git:Commit", not isLocalBuild)
     =?> ("Git:Push", not isLocalBuild)
     ==> "Default"
-    
+
 RunParameterTargetOrDefault "target" "Default"

@@ -200,16 +200,6 @@ let package (config : Map<string, string>) _ =
         |> Seq.choose filterPackageable
         |> Seq.iter (packageProject config (config.get "packaging:output"))
 
-let incrementVersion (version : string) =
-    let lastDigit = version.Substring (version.LastIndexOf '.' + 1) |> Int32.Parse
-    version.Substring (0, version.LastIndexOf '.' + 1) + (lastDigit + 1).ToString()
-
-let readCommonVersion (config : Map<string, string>) =
-    (config.get "versioning:path" |> File.ReadAllLines).[0]
-
-let writeCommonVersion (config : Map<string, string>) =
-    File.WriteAllText (config.get "versioning:path", config |> readCommonVersion |> incrementVersion)
-
 let packageDeploy (config : Map<string, string>) _ =
     CleanDirOnce (config.get "packaging:deployoutput")
 
@@ -222,7 +212,7 @@ let packageDeploy (config : Map<string, string>) _ =
 
     if Directory.Exists (config.get "packaging:nuspecdir")
     then Directory.GetFiles ((config.get "packaging:nuspecdir"), "*.nuspec")
-            |> Array.iter (packageDeployment config (config.get "packaging:deployoutput") (Some version))
+            |> Array.iter (packageDeployment config (config.get "packaging:deployoutput") None /*(Some version)*/)
 
 let push (config : Map<string, string>) _ =
     let pushto = config.TryFind "packaging:pushto"
