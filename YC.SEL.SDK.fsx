@@ -100,7 +100,7 @@ Target "Start" <| DoNothing
 
 "Packaging:RestoreForSubmodule"
     ==> "Packaging:Restore"
-    ==> "Versioning:Update"
+    ==> "Versioning:UpdateAssemblyInfo"
     ==> "Solution:CleanMinimal"
     ==> "Solution:CleanYardFrontend"
     ==> "Solution:BuildMinimal"
@@ -113,6 +113,7 @@ Target "Start" <| DoNothing
     ==> "Solution:Build"
     ==> "Test:Run"
     ==> "Mono.Addins:Xml"
+    ==> "Versioning:UpdateNuspecAndDll"
     ==> "Packaging:Package"
     =?> ("Packaging:Push", not isLocalBuild)
     =?> ("Versioning:IncrementCommonVersion", not isLocalBuild)
