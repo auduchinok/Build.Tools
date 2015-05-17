@@ -112,7 +112,8 @@ let private setVersionToReferences (node : XmlNode) (finalVersion : string) =
 
     let fileNameSplitByDot = fileNameWithoutExtension.Split('.')
     let finalVersionSplitByDot = finalVersion.Split('.')
-    fileNameSplitByDot.[fileNameSplitByDot.Length - 1] <- finalVersionSplitByDot.[finalVersionSplitByDot.Length - 1]
+    for i in 1 .. 4 do
+        fileNameSplitByDot.[fileNameSplitByDot.Length - i] <- finalVersionSplitByDot.[finalVersionSplitByDot.Length - i]
 
     String.concat "." fileNameSplitByDot + fileExtension
 
