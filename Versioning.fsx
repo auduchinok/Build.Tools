@@ -136,15 +136,15 @@ let private updateDeployNuspec config (file:string) =
 
     versionNode.InnerText <- finalVersion
 
-    let listFileNodes = xdoc.SelectNodes("/package/files/file")
-    for node in listFileNodes do 
-        setVersionToDll config node finalVersion
-
-    let listRefNodes = xdoc.SelectNodes("/package/metadata/references/reference")
-    if listRefNodes.Count <> 0 then
-        for node in listRefNodes do
-            let newName = setVersionToReferences node finalVersion
-            node.Attributes.Item(0).InnerText <- newName
+//    let listFileNodes = xdoc.SelectNodes("/package/files/file")
+//    for node in listFileNodes do 
+//        setVersionToDll config node finalVersion
+//
+//    let listRefNodes = xdoc.SelectNodes("/package/metadata/references/reference")
+//    if listRefNodes.Count <> 0 then
+//        for node in listRefNodes do
+//            let newName = setVersionToReferences node finalVersion
+//            node.Attributes.Item(0).InnerText <- newName
 
     WriteStringToFile false file (xdoc.OuterXml.ToString().Replace("><",">\n<"))
 
