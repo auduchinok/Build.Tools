@@ -51,8 +51,9 @@ let pathToTSQLHighLightingGen = @"..\src\TSQL\gen_highlighting.cmd"
 let pathToWorkingDirForTSQLHighLightingGen = @"..\src\TSQL"
 let argsForTSQLHighLightingGen = @""
 
-let packagesConfigDirForSubmodule = @"..\FST"  
-let outputPackageDirForSubmodule = @"..\FST\FST\packages"
+let packagesConfigDirForSubmodules = [(@"..\FST", @"..\FST\FST\packages"); (@"..\facio", @"..\facio\packages")]
+//let packagesConfigDirForSubmodule = @"..\FST"  
+//let outputPackageDirForSubmodule = @"..\FST\FST\packages"
 
 let pathToVersionFileFromRoot = @"VERSION"
 
@@ -66,8 +67,10 @@ let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFr
 commonConfig specConfig
 
 
-
-Target "Packaging:RestoreForSubmodule" <| Packaging.restoreSpecOutput (mapOfDict config) packagesConfigDirForSubmodule outputPackageDirForSubmodule
+Target "Packaging:RestoreForSubmodule" <| (fun () ->
+    List.iter (fun (dir, out) -> Packaging.restoreSpecOutput (mapOfDict config) dir out ()) packagesConfigDirForSubmodules 
+)
+//Target "Packaging:RestoreForSubmodule" <| Packaging.restoreSpecOutput (mapOfDict config) packagesConfigDirForSubmodule outputPackageDirForSubmodule
 
 Target "YardFrontend:Gen" (fun _ ->
     runCmd pathToYardFrontendGen pathToWorkingDirForYardFrontendGen argsForYardFrontendGen
