@@ -203,10 +203,10 @@ let package (config : Map<string, string>) _ =
 let packageDeploy (config : Map<string, string>) _ =
     CleanDirOnce (config.get "packaging:deployoutput")
 
-    File.WriteAllText ("log.txt", config.get "packaging:nuspecpath")
+    File.WriteAllText ("log.txt", config.get "packaging:nuspecdir")
 
-    !! (sprintf @"%s" (config.get "packaging:nuspecpath"))
-        |> Seq.iter (packageDeployment config (config.get "packaging:deployoutput") None)
+//    !! (sprintf @"%s" (config.get "packaging:nuspecpath"))
+//        |> Seq.iter (packageDeployment config (config.get "packaging:deployoutput") None)
 
     if Directory.Exists (config.get "packaging:nuspecdir")
     then Directory.GetFiles ((config.get "packaging:nuspecdir"), "*.nuspec")

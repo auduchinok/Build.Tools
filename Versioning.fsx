@@ -152,17 +152,17 @@ let private updateDeployNuspec config (file:string) =
 let update (config : Map<string, string>) _ =
     //!+ "./**/AssemblyInfo.cs"
     //++ "./**/AssemblyInfo.vb"
-    !! (sprintf @"%s" (config.get "packaging:assemblyinfopath"))
+    //!! (sprintf @"%s" (config.get "packaging:assemblyinfopath"))
     //++ "./**/AssemblyInfo.vb"
         //|> Scan
-        |> Seq.iter (updateAssemblyInfo config)
+    //    |> Seq.iter (updateAssemblyInfo config)
     
     Directory.GetFiles ((config.get "project:srcdir"), "AssemblyInfo.fs", SearchOption.AllDirectories)
         |> Array.iter (updateAssemblyInfo config)
 
 let updateDeploy (config : Map<string, string>) _ =
-    !! (sprintf @"%s" (config.get "packaging:nuspecpath"))
-        |> Seq.iter (updateDeployNuspec config)
+    //!! (sprintf @"%s" (config.get "packaging:nuspecpath"))
+    //   |> Seq.iter (updateDeployNuspec config)
     
     if Directory.Exists (config.get "packaging:nuspecdir")
     then Directory.GetFiles ((config.get "packaging:nuspecdir"), "*.nuspec")
