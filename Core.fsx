@@ -134,7 +134,7 @@ let pushApiKey = @"f6ba9139-9d42-4cf1-acaf-344f963ff807"
 let commitMessage = @"Change version of package in AssemblyInfo and Nuspec files"
 
 let commonConfig (tools : SpecificConfig) =
-    let gitCommandToCommit = sprintf "commit -m \"%s\" \"%s\" \"%s\" \"%s\"" commitMessage tools.PathToAssembleyInfoFromRoot tools.PathToNuspecFromRoot tools.PathToVersionFileFromRoot
+    let gitCommandToCommit = sprintf "commit -m \"%s\" \"%s\"" commitMessage tools.PathToVersionFileFromRoot
     let gitCommandToPush = sprintf "push --repo https://\"%s\":\"%s\"@\"%s\"" config.["git:user"] config.["git:password"] config.["git:reftorepo"]
 
     config.["bin:path"] <- tools.PathToDll
