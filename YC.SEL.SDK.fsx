@@ -39,9 +39,17 @@ let pathToOtherSPPFTestGen = @"..\src\RNGLR.OtherSppfTest\gen.cmd"
 let pathToWorkingDirForOtherSPPFTestGen = @"..\src\RNGLR.OtherSppfTest"
 let argsForOtherSPPFTestGen = @""
 
+let pathToCfgTestGen = @"..\src\ControlFlowGraph.Test\gen.cmd"
+let pathToWorkingDirCfgTestGen = @"..\src\ControlFlowGraph.Test"
+let argsForCfgTestGen = @""
+
 let pathToCalcHighLightingGen = @"..\src\Calc\gen_highlighting.cmd"
 let pathToWorkingDirForCalcHighLightingGen = @"..\src\Calc"
 let argsForCalcHighLightingGen = @""
+
+let pathToExtCalcHighLightingGen = @"..\src\ExtCalc\gen_highlighting.cmd"
+let pathToWorkingDirForExtCalcHighLightingGen = @"..\src\ExtCalc"
+let argsForExtCalcHighLightingGen = @""
 
 let pathToJSONHighLightingGen = @"..\src\JSON_Parser\gen_highlighting.cmd"
 let pathToWorkingDirForJSONHighLightingGen = @"..\src\JSON_Parser"
@@ -85,12 +93,17 @@ Target "RNGLR:GenTest" (fun _ ->
     runCmd pathToOtherSPPFTestGen pathToWorkingDirForOtherSPPFTestGen argsForOtherSPPFTestGen
 )
 
+Target "ControlFlowGraph:GenTest" (fun _ -> 
+    runCmd pathToCfgTestGen pathToWorkingDirCfgTestGen argsForCfgTestGen
+)
+
 Target "GLL:GenTest" (fun _ ->
     runCmd pathToGLLParserSimpleTestGen pathToWorkingDirForGLLParserSimpleTestGen argsForGLLParserSimpleTestGen
 )
 
 Target "HighLighting:GenTest" (fun _ ->
     runCmd pathToCalcHighLightingGen pathToWorkingDirForCalcHighLightingGen argsForCalcHighLightingGen
+    runCmd pathToExtCalcHighLightingGen pathToWorkingDirForExtCalcHighLightingGen argsForExtCalcHighLightingGen
     runCmd pathToJSONHighLightingGen pathToWorkingDirForJSONHighLightingGen argsForJSONHighLightingGen
     runCmd pathToTSQLHighLightingGen pathToWorkingDirForTSQLHighLightingGen argsForTSQLHighLightingGen   
 )
@@ -111,6 +124,7 @@ Target "Start" <| DoNothing
     ==> "Solution:BuildYardFrontend"
     ==> "RNGLR:GenTest"
     ==> "GLL:GenTest"
+    ==> "ControlFlowGraph:GenTest"
     ==> "HighLighting:GenTest"
     ==> "Solution:Clean"
     ==> "Solution:Build"
