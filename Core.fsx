@@ -99,7 +99,7 @@ type SpecificConfig =
             PathToTests = 
                 match test with
                 | Some x -> x
-                | None -> @"..\Bin\Release\v40\*.Test.dll"
+                | None -> @"..\Bin\Release\v40\YC.*.Test.dll"
 
             PathToTools =
                 match tool with
