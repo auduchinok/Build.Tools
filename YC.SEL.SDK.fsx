@@ -7,9 +7,19 @@ open Fake.Git
 open Core
 open Utils
 
+let pathToCoreSolution = @"..\src\YC.Core.sln"
+
 let pathToYardFrontendGen = @"..\src\YardFrontend\gen.cmd"
 let pathToWorkingDirForYardFrontendGen = @"..\src\YardFrontend"
 let argsForYardFrontendGen = @""
+
+let pathToAntlrFrontendGen = @"..\src\AntlrFrontend\gen.cmd"
+let pathToWorkingDirForAntlrFrontendGen = @"..\src\AntlrFrontend"
+let argsForAntlrFrontendGen = @""
+
+let pathToFsYaccFrontendGen = @"..\src\FsYaccFrontend\gen.cmd"
+let pathToWorkingDirForFsYaccFrontendGen = @"..\src\FsYaccFrontend"
+let argsForFsYaccFrontendGen = @""
 
 let pathToMinimalSolution = @"..\src\YC.Minimal.sln"
 
@@ -83,6 +93,15 @@ Target "Packaging:RestoreForSubmodule" <| (fun () ->
 Target "YardFrontend:Gen" (fun _ ->
     runCmd pathToYardFrontendGen pathToWorkingDirForYardFrontendGen argsForYardFrontendGen
 )
+Target "AntlrFrontend:Gen" (fun _ ->
+    runCmd pathToAntlrFrontendGen pathToWorkingDirForAntlrFrontendGen argsForAntlrFrontendGen
+)
+Target "FsYaccFrontend:Gen" (fun _ ->
+    runCmd pathToFsYaccFrontendGen pathToWorkingDirForFsYaccFrontendGen argsForFsYaccFrontendGen
+)
+Target "Solution:BuildCore" <| Solution.buildSpec (mapOfDict config) pathToCoreSolution
+Target "Solution:CleanCore" <| Solution.cleanSpec (mapOfDict config) pathToCoreSolution
+
 Target "Solution:BuildMinimal" <| Solution.buildSpec (mapOfDict config) pathToMinimalSolution
 Target "Solution:CleanMinimal" <| Solution.cleanSpec (mapOfDict config) pathToMinimalSolution
 Target "RNGLR:GenTest" (fun _ ->
@@ -104,7 +123,7 @@ Target "GLL:GenTest" (fun _ ->
 Target "HighLighting:GenTest" (fun _ ->
     runCmd pathToCalcHighLightingGen pathToWorkingDirForCalcHighLightingGen argsForCalcHighLightingGen
     runCmd pathToExtCalcHighLightingGen pathToWorkingDirForExtCalcHighLightingGen argsForExtCalcHighLightingGen
-    runCmd pathToJSONHighLightingGen pathToWorkingDirForJSONHighLightingGen argsForJSONHighLightingGen
+    //runCmd pathToJSONHighLightingGen pathToWorkingDirForJSONHighLightingGen argsForJSONHighLightingGen
     runCmd pathToTSQLHighLightingGen pathToWorkingDirForTSQLHighLightingGen argsForTSQLHighLightingGen   
 )
 
@@ -117,10 +136,14 @@ Target "Start" <| DoNothing
 "Packaging:RestoreForSubmodule"
     ==> "Packaging:Restore"
     ==> "Versioning:UpdateAssemblyInfo"
+    ==> "Solution:CleanCore"
     ==> "Solution:CleanMinimal"
     ==> "Solution:CleanYardFrontend"
+    ==> "Solution:BuildCore"
+    ==> "FsYaccFrontend:Gen"
     ==> "Solution:BuildMinimal"
     ==> "YardFrontend:Gen"
+    ==> "AntlrFrontend:Gen"
     ==> "Solution:BuildYardFrontend"
     ==> "RNGLR:GenTest"
     ==> "GLL:GenTest"
