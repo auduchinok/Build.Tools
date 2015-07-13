@@ -45,6 +45,10 @@ let pathToGLLParserSimpleTestGen = @"..\src\GLLParser.SimpleTest\gen.cmd "
 let pathToWorkingDirForGLLParserSimpleTestGen = @"..\src\GLLParser.SimpleTest"
 let argsForGLLParserSimpleTestGen = @""
 
+let pathToGLLParserAppGen = @"..\src\GLLApplication\gen.cmd"
+let pathToWorkingDirForGLLParserAppGen = @"..\src\GLLApplication"
+let argsForGLLParserAppGen = @""
+
 let pathToOtherSPPFTestGen = @"..\src\RNGLR.OtherSppfTest\gen.cmd"
 let pathToWorkingDirForOtherSPPFTestGen = @"..\src\RNGLR.OtherSppfTest"
 let argsForOtherSPPFTestGen = @""
@@ -118,6 +122,7 @@ Target "ControlFlowGraph:GenTest" (fun _ ->
 
 Target "GLL:GenTest" (fun _ ->
     runCmd pathToGLLParserSimpleTestGen pathToWorkingDirForGLLParserSimpleTestGen argsForGLLParserSimpleTestGen
+    runCmd pathToGLLParserAppGen pathToWorkingDirForGLLParserAppGen argsForGLLParserAppGen
 )
 
 Target "HighLighting:GenTest" (fun _ ->
