@@ -49,8 +49,12 @@ let pathToGLLParserAppGen = @"..\src\GLLApplication\gen.cmd"
 let pathToWorkingDirForGLLParserAppGen = @"..\src\GLLApplication"
 let argsForGLLParserAppGen = @""
 
-let pathToOtherSPPFTestGen = @"..\src\RNGLR.OtherSppfTest\gen.cmd"
-let pathToWorkingDirForOtherSPPFTestGen = @"..\src\RNGLR.OtherSppfTest"
+let pathToASTTestGen = @"..\src\AST.Test\gen.cmd"
+let pathToWorkingDirForASTTestGen = @"..\src\AST.Test"
+let argsForASTTestGen = @""
+
+let pathToOtherSPPFTestGen = @"..\src\OtherSPPF.Test\gen.cmd"
+let pathToWorkingDirForOtherSPPFTestGen = @"..\src\OtherSPPF.Test"
 let argsForOtherSPPFTestGen = @""
 
 let pathToCfgTestGen = @"..\src\ControlFlowGraph.Test\gen.cmd"
@@ -113,6 +117,11 @@ Target "RNGLR:GenTest" (fun _ ->
     runCmd pathToRNGLRAbstractParserTestGen pathToWorkingDirForRNGLRAbstractParserTestGen argsForRNGLRAbstractParserTestGen
     runCmd pathToRNGLRParserErrorRecoveryTestGen pathToWorkingDirForRNGLRParserErrorRecoveryTestGen argsForRNGLRParserErrorRecoveryTestGen
     runCmd pathToRNGLRParserSimpleTestGen pathToWorkingDirForRNGLRParserSimpleTestGen argsForRNGLRParserSimpleTestGen
+    
+)
+
+Target "ASTTest:Gen" (fun _ ->
+    runCmd pathToASTTestGen pathToWorkingDirForASTTestGen argsForASTTestGen
     runCmd pathToOtherSPPFTestGen pathToWorkingDirForOtherSPPFTestGen argsForOtherSPPFTestGen
 )
 
@@ -152,6 +161,7 @@ Target "Start" <| DoNothing
     ==> "Solution:BuildYardFrontend"
     ==> "RNGLR:GenTest"
     ==> "GLL:GenTest"
+    ==> "ASTTest:Gen"
     ==> "ControlFlowGraph:GenTest"
     ==> "HighLighting:GenTest"
     ==> "Solution:Clean"
