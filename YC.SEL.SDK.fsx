@@ -33,6 +33,10 @@ let pathToRNGLRAbstractParserTestGen = @"..\src\RNGLRAbstractParser.Test\gen.cmd
 let pathToWorkingDirForRNGLRAbstractParserTestGen = @"..\src\RNGLRAbstractParser.Test"
 let argsForRNGLRAbstractParserTestGen = @""
 
+let pathToRNGLRApplication = @"..\src\RNGLRApplication\gen.cmd"
+let pathToWorkingDirForRNGLRApplication = @"..\src\RNGLRApplication"
+let argsForRNGLRApplication = @""
+
 let pathToRNGLRParserErrorRecoveryTestGen = @"..\src\RNGLRParser.ErrorRecoveryTest\gen.cmd"
 let pathToWorkingDirForRNGLRParserErrorRecoveryTestGen = @"..\src\RNGLRParser.ErrorRecoveryTest"
 let argsForRNGLRParserErrorRecoveryTestGen = @""
@@ -117,6 +121,7 @@ Target "RNGLR:GenTest" (fun _ ->
     runCmd pathToRNGLRAbstractParserTestGen pathToWorkingDirForRNGLRAbstractParserTestGen argsForRNGLRAbstractParserTestGen
     runCmd pathToRNGLRParserErrorRecoveryTestGen pathToWorkingDirForRNGLRParserErrorRecoveryTestGen argsForRNGLRParserErrorRecoveryTestGen
     runCmd pathToRNGLRParserSimpleTestGen pathToWorkingDirForRNGLRParserSimpleTestGen argsForRNGLRParserSimpleTestGen
+    runCmd pathToRNGLRApplication pathToWorkingDirForRNGLRApplication argsForRNGLRApplication
     
 )
 
