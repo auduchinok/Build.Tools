@@ -77,9 +77,12 @@ let pathToJSONHighLightingGen = @"..\src\JSON_Parser\gen_highlighting.cmd"
 let pathToWorkingDirForJSONHighLightingGen = @"..\src\JSON_Parser"
 let argsForJSONHighLightingGen = @""
 
-let pathToTSQLHighLightingGen = @"..\src\TSQL\gen_highlighting.cmd"
-let pathToWorkingDirForTSQLHighLightingGen = @"..\src\TSQL"
-let argsForTSQLHighLightingGen = @""
+//let pathToTSQLHighLightingGen = @"..\src\TSQL\gen_highlighting.cmd"
+let pathToTSQLAbstractHighLightingGen = @"..\src\TSQL\gen_abstract_highlighting.cmd"
+let pathToTSQLNonAbstractGen = @"..\src\TSQL\gen_rnglr_non_abstract.cmd"
+let pathToWorkingDirForTSQLGen = @"..\src\TSQL"
+let argsForTSQLAbstractHighLightingGen = @""
+let argsForTSQLNonAbstractGen = @""
 
 let packagesConfigDirForSubmodules = [(@"..\FST", @"..\FST\FST\packages"); (@"..\facio", @"..\facio\packages")]
 //let packagesConfigDirForSubmodule = @"..\FST"  
@@ -143,7 +146,11 @@ Target "HighLighting:GenTest" (fun _ ->
     runCmd pathToCalcHighLightingGen pathToWorkingDirForCalcHighLightingGen argsForCalcHighLightingGen
     runCmd pathToExtCalcHighLightingGen pathToWorkingDirForExtCalcHighLightingGen argsForExtCalcHighLightingGen
     //runCmd pathToJSONHighLightingGen pathToWorkingDirForJSONHighLightingGen argsForJSONHighLightingGen
-    runCmd pathToTSQLHighLightingGen pathToWorkingDirForTSQLHighLightingGen argsForTSQLHighLightingGen   
+    runCmd pathToTSQLAbstractHighLightingGen pathToWorkingDirForTSQLGen argsForTSQLAbstractHighLightingGen   
+)
+
+Target "TSQLNonAbstract:GenTest" (fun _ ->
+    runCmd pathToTSQLNonAbstractGen pathToWorkingDirForTSQLGen argsForTSQLNonAbstractGen   
 )
 
 Target "Solution:BuildYardFrontend" <| Solution.buildSpec (mapOfDict config) pathToYardFrontendSolution
@@ -169,6 +176,7 @@ Target "Start" <| DoNothing
     ==> "ASTTest:Gen"
     ==> "ControlFlowGraph:GenTest"
     ==> "HighLighting:GenTest"
+    ==> "TSQLNonAbstract:GenTest"
     ==> "Solution:Clean"
     ==> "Solution:Build"
     ==> "Test:Run"
