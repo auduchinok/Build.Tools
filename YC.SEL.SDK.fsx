@@ -49,6 +49,14 @@ let pathToGLLParserSimpleTestGen = @"..\src\GLLParser.SimpleTest\gen.cmd "
 let pathToWorkingDirForGLLParserSimpleTestGen = @"..\src\GLLParser.SimpleTest"
 let argsForGLLParserSimpleTestGen = @""
 
+let pathToGLLParserAbstrTestGen = @"..\src\GLL.AbstractParser.SimpleTest\gen.cmd "
+let pathToWorkingDirForGLLParserAbstrTestGen = @"..\src\GLL.AbstractParser.SimpleTest"
+let argsForGLLParserAbstrTestGen = @""
+
+let pathToGLLParserAppAbstrGen = @"..\src\GLLAbstractApplication\gen.cmd"
+let pathToWorkingDirForGLLParserAppAbstrGen = @"..\src\GLLAbstractApplication"
+let argsForGLLParserAppAbstrGen = @""
+
 let pathToGLLParserAppGen = @"..\src\GLLApplication\gen.cmd"
 let pathToWorkingDirForGLLParserAppGen = @"..\src\GLLApplication"
 let argsForGLLParserAppGen = @""
@@ -139,7 +147,9 @@ Target "ControlFlowGraph:GenTest" (fun _ ->
 
 Target "GLL:GenTest" (fun _ ->
     runCmd pathToGLLParserSimpleTestGen pathToWorkingDirForGLLParserSimpleTestGen argsForGLLParserSimpleTestGen
+    runCmd pathToGLLParserAbstrTestGen pathToWorkingDirForGLLParserAbstrTestGen argsForGLLParserAbstrTestGen
     runCmd pathToGLLParserAppGen pathToWorkingDirForGLLParserAppGen argsForGLLParserAppGen
+    runCmd pathToGLLParserAppAbstrGen pathToWorkingDirForGLLParserAppAbstrGen argsForGLLParserAppAbstrGen
 )
 
 Target "HighLighting:GenTest" (fun _ ->
