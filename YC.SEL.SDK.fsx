@@ -180,7 +180,7 @@ Target "Start" <| DoNothing
 
 
 "Packaging:RestoreForSubmodule"
-    =?> ("QuickGraph:InstallTools", not isLocalBuild)
+    //=?> ("QuickGraph:InstallTools", not isLocalBuild)
     ==> "QuickGraph:Build"
     ==> "Packaging:Restore"
     ==> "Versioning:UpdateAssemblyInfo"
