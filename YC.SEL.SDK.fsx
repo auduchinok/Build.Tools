@@ -169,7 +169,7 @@ Target "QuickGraph:InstallTools" (fun _ ->
 
 
 Target "QuickGraph:Build" (fun _ ->
-    runCmd @"..\QuickGraph\build.cmd" @"..\QuickGraph" ""
+    runCmd @"QuickGraph\build.cmd" @"QuickGraph" ""
 )
 
 
