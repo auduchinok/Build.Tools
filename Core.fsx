@@ -16,7 +16,7 @@ open Utils
 let config = 
     let dict = new Dictionary<_,_>()
     [
-        "project:srcdir",                environVarOrDefault "projectsrcdir"            (sprintf "%s\..\src" (Path.GetFullPath(".")))
+        "project:srcdir",                environVarOrDefault "projectsrcdir"            (sprintf "%s\src" (Path.GetFullPath(".")))
         "bin:path",                     environVarOrDefault "bin"                   ""
         "build:configuration",          environVarOrDefault "configuration"         "Release"
         "build:solution",               environVar          "solution"
@@ -42,10 +42,10 @@ let config =
         "packaging:assemblyinfopath",   environVarOrDefault "assemblyinfo"          ""
         "packaging:nuspecpath",         environVarOrDefault "nuspec"                ""
         "packaging:nugetconfig",        environVarOrDefault "nugetconfig"           ""
-        "packaging:nuspecdir",          environVarOrDefault "nuspecdir"             (sprintf "%s\..\Nuspec" (Path.GetFullPath(".")))
+        "packaging:nuspecdir",          environVarOrDefault "nuspecdir"             (sprintf "%s\Nuspec" (Path.GetFullPath(".")))
         "repo:path",                    environVarOrDefault "repo"                  ""    
         "test:path",                    environVarOrDefault "tests"                 ""
-        "versioning:path",              environVarOrDefault "version_path"          (sprintf "%s\..\VERSION" (Path.GetFullPath(".")))
+        "versioning:path",              environVarOrDefault "version_path"          (sprintf "%s\VERSION" (Path.GetFullPath(".")))
         "versioning:build",             environVarOrDefault "build_number"          "0"
         "versioning:branch",            match environVar "teamcity_build_branch" with
                                             | "<default>" -> environVar "vcsroot_branch"
@@ -89,42 +89,42 @@ type SpecificConfig =
             PathToRepository =
                 match repo with
                 | Some x -> x
-                | None -> @".."
+                | None -> @""
 
             PathToDll = 
                 match dll with
                 | Some x -> x
-                | None -> @"..\Bin\Release\v40"
+                | None -> @"Bin\Release\v40"
 
             PathToTests = 
                 match test with
                 | Some x -> x
-                | None -> @"..\Bin\Release\v40\YC.*.Test.dll"
+                | None -> @"Bin\Release\v40\YC.*.Test.dll"
 
             PathToTools =
                 match tool with
                 | Some x -> x
-                | None -> @"..\tools\Build.Tools"
+                | None -> @"tools\Build.Tools"
 
             PathToPackages =
                 match pack with
                 | Some x -> x
-                | None -> @"..\src\packages"
+                | None -> @"src\packages"
 
             PathToNugetConfig = 
                 match nugetconf with
                 | Some x -> x
-                | None -> @"..\src\NuGet.config"
+                | None -> @"src\NuGet.config"
 
             PathToAddinsNodesFromConfigXML = 
                 match addins with
                 | Some x -> x
-                | None -> @"../../../../../Bin/Release/v40/"
+                | None -> @"../../../../Bin/Release/v40/"
 
             PathToAddinsConfigXML = 
                 match addinsxml with
                 | Some x -> x
-                | None -> @"..\src\packages\YaccConstructor.*\**\*.addins"    
+                | None -> @"src\packages\YaccConstructor.*\**\*.addins"    
         }
     end
 

@@ -7,101 +7,101 @@ open Fake.Git
 open Core
 open Utils
 
-let pathToCoreSolution = @"..\src\YC.Core.sln"
+let pathToCoreSolution = @"src\YC.Core.sln"
 
-let pathToYardFrontendGen = @"..\src\YardFrontend\gen.cmd"
-let pathToWorkingDirForYardFrontendGen = @"..\src\YardFrontend"
+let pathToYardFrontendGen = @"src\YardFrontend\gen.cmd"
+let pathToWorkingDirForYardFrontendGen = @"src\YardFrontend"
 let argsForYardFrontendGen = @""
 
-let pathToAntlrFrontendGen = @"..\src\AntlrFrontend\gen.cmd"
-let pathToWorkingDirForAntlrFrontendGen = @"..\src\AntlrFrontend"
+let pathToAntlrFrontendGen = @"src\AntlrFrontend\gen.cmd"
+let pathToWorkingDirForAntlrFrontendGen = @"src\AntlrFrontend"
 let argsForAntlrFrontendGen = @""
 
-let pathToFsYaccFrontendGen = @"..\src\FsYaccFrontend\gen.cmd"
-let pathToWorkingDirForFsYaccFrontendGen = @"..\src\FsYaccFrontend"
+let pathToFsYaccFrontendGen = @"src\FsYaccFrontend\gen.cmd"
+let pathToWorkingDirForFsYaccFrontendGen = @"src\FsYaccFrontend"
 let argsForFsYaccFrontendGen = @""
 
-let pathToMinimalSolution = @"..\src\YC.Minimal.sln"
+let pathToMinimalSolution = @"src\YC.Minimal.sln"
 
-let pathToYardFrontendSolution = @"..\src\YC.YardFrontend.sln"
+let pathToYardFrontendSolution = @"src\YC.YardFrontend.sln"
 
-let pathToRNGLRAbstractParserTestGenLex = @"..\src\RNGLRAbstractParser.Test\gen_lex.cmd"
-let pathToWorkingDirForRNGLRAbstractParserTestGenLex = @"..\src\RNGLRAbstractParser.Test"
+let pathToRNGLRAbstractParserTestGenLex = @"src\RNGLRAbstractParser.Test\gen_lex.cmd"
+let pathToWorkingDirForRNGLRAbstractParserTestGenLex = @"src\RNGLRAbstractParser.Test"
 let argsForRNGLRAbstractParserTestGenLex = @""
 
-let pathToRNGLRAbstractParserTestGen = @"..\src\RNGLRAbstractParser.Test\gen.cmd"
-let pathToWorkingDirForRNGLRAbstractParserTestGen = @"..\src\RNGLRAbstractParser.Test"
+let pathToRNGLRAbstractParserTestGen = @"src\RNGLRAbstractParser.Test\gen.cmd"
+let pathToWorkingDirForRNGLRAbstractParserTestGen = @"src\RNGLRAbstractParser.Test"
 let argsForRNGLRAbstractParserTestGen = @""
 
-let pathToRNGLRApplication = @"..\src\RNGLRApplication\gen.cmd"
-let pathToWorkingDirForRNGLRApplication = @"..\src\RNGLRApplication"
+let pathToRNGLRApplication = @"src\RNGLRApplication\gen.cmd"
+let pathToWorkingDirForRNGLRApplication = @"src\RNGLRApplication"
 let argsForRNGLRApplication = @""
 
-let pathToRNGLRParserErrorRecoveryTestGen = @"..\src\RNGLRParser.ErrorRecoveryTest\gen.cmd"
-let pathToWorkingDirForRNGLRParserErrorRecoveryTestGen = @"..\src\RNGLRParser.ErrorRecoveryTest"
+let pathToRNGLRParserErrorRecoveryTestGen = @"src\RNGLRParser.ErrorRecoveryTest\gen.cmd"
+let pathToWorkingDirForRNGLRParserErrorRecoveryTestGen = @"src\RNGLRParser.ErrorRecoveryTest"
 let argsForRNGLRParserErrorRecoveryTestGen = @""
 
-let pathToRNGLRParserSimpleTestGen = @"..\src\RNGLRParser.SimpleTest\gen.cmd"
-let pathToWorkingDirForRNGLRParserSimpleTestGen = @"..\src\RNGLRParser.SimpleTest"
+let pathToRNGLRParserSimpleTestGen = @"src\RNGLRParser.SimpleTest\gen.cmd"
+let pathToWorkingDirForRNGLRParserSimpleTestGen = @"src\RNGLRParser.SimpleTest"
 let argsForRNGLRParserSimpleTestGen = @""
 
-let pathToGLLParserSimpleTestGen = @"..\src\GLLParser.SimpleTest\gen.cmd "
-let pathToWorkingDirForGLLParserSimpleTestGen = @"..\src\GLLParser.SimpleTest"
+let pathToGLLParserSimpleTestGen = @"src\GLLParser.SimpleTest\gen.cmd "
+let pathToWorkingDirForGLLParserSimpleTestGen = @"src\GLLParser.SimpleTest"
 let argsForGLLParserSimpleTestGen = @""
 
-let pathToGLLParserAbstrTestGen = @"..\src\GLL.AbstractParser.SimpleTest\gen.cmd "
-let pathToWorkingDirForGLLParserAbstrTestGen = @"..\src\GLL.AbstractParser.SimpleTest"
+let pathToGLLParserAbstrTestGen = @"src\GLL.AbstractParser.SimpleTest\gen.cmd "
+let pathToWorkingDirForGLLParserAbstrTestGen = @"src\GLL.AbstractParser.SimpleTest"
 let argsForGLLParserAbstrTestGen = @""
 
-let pathToGLLParserAppAbstrGen = @"..\src\GLLAbstractApplication\gen.cmd"
-let pathToWorkingDirForGLLParserAppAbstrGen = @"..\src\GLLAbstractApplication"
+let pathToGLLParserAppAbstrGen = @"src\GLLAbstractApplication\gen.cmd"
+let pathToWorkingDirForGLLParserAppAbstrGen = @"src\GLLAbstractApplication"
 let argsForGLLParserAppAbstrGen = @""
 
-let pathToGLLParserAppGen = @"..\src\GLLApplication\gen.cmd"
-let pathToWorkingDirForGLLParserAppGen = @"..\src\GLLApplication"
+let pathToGLLParserAppGen = @"src\GLLApplication\gen.cmd"
+let pathToWorkingDirForGLLParserAppGen = @"src\GLLApplication"
 let argsForGLLParserAppGen = @""
 
-let pathToASTTestGen = @"..\src\AST.Test\gen.cmd"
-let pathToWorkingDirForASTTestGen = @"..\src\AST.Test"
+let pathToASTTestGen = @"src\AST.Test\gen.cmd"
+let pathToWorkingDirForASTTestGen = @"src\AST.Test"
 let argsForASTTestGen = @""
 
-let pathToOtherSPPFTestGen = @"..\src\OtherSPPF.Test\gen.cmd"
-let pathToWorkingDirForOtherSPPFTestGen = @"..\src\OtherSPPF.Test"
+let pathToOtherSPPFTestGen = @"src\OtherSPPF.Test\gen.cmd"
+let pathToWorkingDirForOtherSPPFTestGen = @"src\OtherSPPF.Test"
 let argsForOtherSPPFTestGen = @""
 
-let pathToCfgTestGen = @"..\src\ControlFlowGraph.Test\gen.cmd"
-let pathToWorkingDirCfgTestGen = @"..\src\ControlFlowGraph.Test"
+let pathToCfgTestGen = @"src\ControlFlowGraph.Test\gen.cmd"
+let pathToWorkingDirCfgTestGen = @"src\ControlFlowGraph.Test"
 let argsForCfgTestGen = @""
 
-let pathToCalcHighLightingGen = @"..\src\Calc\gen_highlighting.cmd"
-let pathToWorkingDirForCalcHighLightingGen = @"..\src\Calc"
+let pathToCalcHighLightingGen = @"src\Calc\gen_highlighting.cmd"
+let pathToWorkingDirForCalcHighLightingGen = @"src\Calc"
 let argsForCalcHighLightingGen = @""
 
-let pathToExtCalcHighLightingGen = @"..\src\ExtCalc\gen_highlighting.cmd"
-let pathToWorkingDirForExtCalcHighLightingGen = @"..\src\ExtCalc"
+let pathToExtCalcHighLightingGen = @"src\ExtCalc\gen_highlighting.cmd"
+let pathToWorkingDirForExtCalcHighLightingGen = @"src\ExtCalc"
 let argsForExtCalcHighLightingGen = @""
 
-let pathToJSONHighLightingGen = @"..\src\JSON_Parser\gen_highlighting.cmd"
-let pathToWorkingDirForJSONHighLightingGen = @"..\src\JSON_Parser"
+let pathToJSONHighLightingGen = @"src\JSON_Parser\gen_highlighting.cmd"
+let pathToWorkingDirForJSONHighLightingGen = @"src\JSON_Parser"
 let argsForJSONHighLightingGen = @""
 
-//let pathToTSQLHighLightingGen = @"..\src\TSQL\gen_highlighting.cmd"
-let pathToTSQLAbstractHighLightingGen = @"..\src\TSQL\gen_abstract_highlighting.cmd"
-let pathToTSQLNonAbstractGen = @"..\src\TSQL\gen_rnglr_non_abstract.cmd"
-let pathToWorkingDirForTSQLGen = @"..\src\TSQL"
+//let pathToTSQLHighLightingGen = @"src\TSQL\gen_highlighting.cmd"
+let pathToTSQLAbstractHighLightingGen = @"src\TSQL\gen_abstract_highlighting.cmd"
+let pathToTSQLNonAbstractGen = @"src\TSQL\gen_rnglr_non_abstract.cmd"
+let pathToWorkingDirForTSQLGen = @"src\TSQL"
 let argsForTSQLAbstractHighLightingGen = @""
 let argsForTSQLNonAbstractGen = @""
 
-let packagesConfigDirForSubmodules = [(@"..\FST", @"..\FST\FST\packages"); (@"..\facio", @"..\facio\packages")]
-//let packagesConfigDirForSubmodule = @"..\FST"  
-//let outputPackageDirForSubmodule = @"..\FST\FST\packages"
+let packagesConfigDirForSubmodules = [(@"FST", @"FST\FST\packages"); (@"facio", @"facio\packages")]
+//let packagesConfigDirForSubmodule = @"FST"  
+//let outputPackageDirForSubmodule = @"FST\FST\packages"
 
 let pathToVersionFileFromRoot = @"VERSION"
 
-let pathToSolution = @"..\src\YC.SDK.sln"
-let pathToNuspec = @"..\src\FsYacc\YC.Tools.nuspec"
+let pathToSolution = @"src\YC.SDK.sln"
+let pathToNuspec = @"src\FsYacc\YC.Tools.nuspec"
 let pathToNuspecFromRoot = @"src\FsYacc\YC.Tools.nuspec"
-let pathToAssembleyInfo = @"..\src\FsYacc\AssemblyInfo.fs"
+let pathToAssembleyInfo = @"src\FsYacc\AssemblyInfo.fs"
 let pathToAssembleyInfoFromRoot = @"src\FsYacc\AssemblyInfo.fs"
 
 let specConfig = new SpecificConfig(pathToSolution, pathToNuspec, pathToNuspecFromRoot, pathToAssembleyInfo, pathToAssembleyInfoFromRoot, versfile  = pathToVersionFileFromRoot)
@@ -164,7 +164,7 @@ Target "TSQLNonAbstract:GenTest" (fun _ ->
 )
 
 Target "QuickGraph:InstallTools" (fun _ ->
-    runCmd @"msiexec.exe" @"..\QuickGraph" """ /i "lib\Pex\pex.academic.x86.msi" /quiet /norestart"""
+    runCmd @"msiexec.exe" @"QuickGraph" """ /i "lib\Pex\pex.academic.x86.msi" /quiet /norestart"""
 )
 
 
