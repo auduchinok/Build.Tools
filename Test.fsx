@@ -15,4 +15,5 @@ let run (config : Map<string, string>) _ =
             (fun defaults ->
                 { defaults with 
                     ToolPath = config.get "core:tools" @@ nunitRunners
+                    TimeOut = new TimeSpan(0, 30, 0)
                  })
