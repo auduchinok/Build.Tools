@@ -50,7 +50,7 @@ let runCmd cmd workingDir args =
         ExecProcess (fun info ->
             info.FileName <- Path.GetFullPath cmd
             info.WorkingDirectory <- Path.GetFullPath workingDir
-            info.Arguments <- args) (TimeSpan.FromMinutes 5.)
+            info.Arguments <- args) (TimeSpan.FromMinutes 20.)
     if result <> 0 then failwithf "Error running cmd script. File: %s" cmd
 
 let private correctAddinsXml (config : Map<string, string>) file = 
