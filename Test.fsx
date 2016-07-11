@@ -14,6 +14,7 @@ let run (config : Map<string, string>) _ =
         |> NUnit 
             (fun defaults ->
                 { defaults with 
+                    Framework = "net-4.5"
                     ToolPath = config.get "core:tools" @@ nunitRunners
                     TimeOut = System.TimeSpan.FromMinutes 30.
                  })

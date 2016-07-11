@@ -7,7 +7,7 @@ open System.Xml
 open System.Collections.Generic
 open Microsoft.FSharp.Collections
 
-let nunitRunners = @"./NUnit.Runners/tools"
+let nunitRunners = @"./NUnit.Runners.2.6.4/tools"
 let specFlowRunners = "./SpecFlow/tools"
 let nuget = @"./nuget/nuget.exe"
 
@@ -19,7 +19,7 @@ let ensureNunitRunner (config : Map<string, string>) =
   let dir = config.get "core:tools" @@ nunitRunners
   if not (directoryExists <| config.get "core:tools" @@ nunitRunners) then
      let args =
-         sprintf "Install NUnit.Runners -ExcludeVersion -OutputDirectory \"%s\""
+         sprintf "Install NUnit.Runners -Version 2.6.4 -OutputDirectory \"%s\""
              (config.get "core:tools")
      let result =
          ExecProcess (fun info ->
