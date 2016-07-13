@@ -45,16 +45,7 @@ let private constructInfoVersion (config: Map<string, string>) (fileVersion: Ver
             fileVersion.Minor, 
             fileVersion.Build)
 
-    let suffix =
-        match isLocalBuild with
-            | true -> 
-                "." + (fileVersion.Revision + 1).ToString() //+ "-" + ((getBranchName (DirectoryName file)) |> escapeBranchName) + "-local"
-            | _ ->
-                match config.get "versioning:branch" with
-                    | "master" -> 
-                        "." + (fileVersion.Revision + 1).ToString()
-                    | _ -> 
-                        "." + (fileVersion.Revision + 1).ToString() + "-" + (config.get "versioning:branch" |> escapeBranchName) + "-ci"
+    let suffix = "." + (fileVersion.Revision + 1).ToString()
 
     infoVersion.ToString() + suffix
 

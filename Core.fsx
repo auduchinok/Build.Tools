@@ -47,9 +47,6 @@ let config =
         "test:path",                    environVarOrDefault "tests"                 ""
         "versioning:path",              environVarOrDefault "version_path"          (sprintf "%s\VERSION" (Path.GetFullPath(".")))
         "versioning:build",             environVarOrDefault "build_number"          "0"
-        "versioning:branch",            match environVar "teamcity_build_branch" with
-                                            | "<default>" -> environVar "vcsroot_branch"
-                                            | _ -> environVar "teamcity_build_branch"
         "vs:version",                   environVarOrDefault "vs_version"            "11.0"
     ]
     |> List.iter (fun (k,v) -> dict.Add(k,v))
