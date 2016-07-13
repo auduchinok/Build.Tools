@@ -163,15 +163,6 @@ Target "TSQLNonAbstract:GenTest" (fun _ ->
     runCmd pathToTSQLNonAbstractGen pathToWorkingDirForTSQLGen argsForTSQLNonAbstractGen   
 )
 
-Target "QuickGraph:InstallTools" (fun _ ->
-    runCmd @"msiexec.exe" @"QuickGraph" """ /i "lib\Pex\pex.academic.x86.msi" /quiet /norestart"""
-)
-
-
-Target "QuickGraph:Build" (fun _ ->
-    runCmd @"QuickGraph\build.cmd" @"QuickGraph" ""
-)
-
 
 Target "Solution:BuildYardFrontend" <| Solution.buildSpec (mapOfDict config) pathToYardFrontendSolution
 Target "Solution:CleanYardFrontend" <| Solution.cleanSpec (mapOfDict config) pathToYardFrontendSolution
@@ -180,8 +171,6 @@ Target "Start" <| DoNothing
 
 
 "Packaging:RestoreForSubmodule"
-    //=?> ("QuickGraph:InstallTools", not isLocalBuild)
-    ==> "QuickGraph:Build"
     ==> "Packaging:Restore"
     ==> "Versioning:UpdateAssemblyInfo"
     ==> "Solution:CleanCore"
